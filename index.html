@@ -227,6 +227,15 @@ footer {
   color: var(--ink-2);
   text-align: center;
 }
+
+.trial-box { margin-top: 14px; }
+.trial-form { display: none; margin-top: 14px; background: #ffffff; border: 1px solid var(--hairline); border-radius: 14px; padding: 18px; text-align: right; }
+.trial-form.open { display: block; }
+.trial-form label { display: block; font-weight: 700; margin: 10px 0 4px; font-size: 15px; }
+.trial-form input, .trial-form textarea { width: 100%; padding: 10px 12px; border: 1px solid var(--hairline); border-radius: 10px; font-family: inherit; font-size: 16px; background: var(--cream); color: var(--ink); }
+.trial-form textarea { min-height: 70px; resize: vertical; }
+.trial-err { color: #b3261e; font-size: 14px; min-height: 20px; margin-top: 8px; }
+.trial-note { font-size: 14px; color: var(--ink-2); margin-top: 8px; }
 </style>
 </head>
 <body>
@@ -240,6 +249,24 @@ footer {
     <p class="intro">ميزان برنامج محاسبة سحابي وبرنامج كاشير (نقاط بيع POS) بيطلّعلك الفاتورة في أقل من نص دقيقة ويخليك تعرف كسبت كام النهاردة في ثانية. بيدير المخزون والجرد بالباركود، والخزينة والمحافظ والبنوك، وفيه صفحة بتحسب ضريبة القيمة المضافة تلقائياً. مناسب لكل أنواع المحلات والأنشطة. جرّب النسخة التجريبية المجانية عن طريق واتساب.</p>
     <a class="btn-gold" href="https://wa.me/201002655282">اطلب النسخة التجريبية على واتساب</a>
     <p style="margin-top:14px"><a class="btn-outline" href="https://adelsamir699-maker.github.io" target="_blank" rel="noopener">دخول العملاء — تسجيل الدخول لميزان</a></p>
+    <div class="trial-box">
+      <button type="button" class="btn-gold" id="trial-toggle">اطلب حسابك التجريبي مجانًا الآن</button>
+      <form class="trial-form" id="trial-form" novalidate>
+        <label for="t-name">الاسم</label>
+        <input id="t-name" name="name" type="text" autocomplete="name">
+        <label for="t-biz">اسم الشركة أو المحل</label>
+        <input id="t-biz" name="biz" type="text" autocomplete="organization">
+        <label for="t-act">نوع النشاط</label>
+        <input id="t-act" name="act" type="text" placeholder="مثال: سوبر ماركت، ملابس، عطارة">
+        <label for="t-phone">رقم الموبايل</label>
+        <input id="t-phone" name="phone" type="tel" inputmode="tel" dir="ltr" autocomplete="tel" placeholder="01xxxxxxxxx">
+        <label for="t-note">ملاحظة (اختياري)</label>
+        <textarea id="t-note" name="note"></textarea>
+        <div class="trial-err" id="trial-err"></div>
+        <button type="submit" class="btn-gold">ابعت الطلب على واتساب</button>
+        <p class="trial-note">بعد الضغط هيتفتح واتساب بالرسالة جاهزة، اضغط إرسال ويوصلنا طلبك. مفيش بيانات بتتسجل على الموقع.</p>
+      </form>
+    </div>
   </div>
 
   <section id="screenshot">
@@ -329,5 +356,35 @@ footer {
   <footer>السعر والمميزات كما هي في 26 نوفمبر 2026.</footer>
 
 </div>
+
+<script>
+(function(){
+  var toggle = document.getElementById('trial-toggle');
+  var form = document.getElementById('trial-form');
+  var err = document.getElementById('trial-err');
+  toggle.addEventListener('click', function(){ form.classList.toggle('open'); });
+  function v(id){ return document.getElementById(id).value.trim(); }
+  window.buildTrialWaLink = function(){
+    var name=v('t-name'), biz=v('t-biz'), act=v('t-act'), phone=v('t-phone'), note=v('t-note');
+    if(!name || !biz || !act || !phone){ return {error:'من فضلك املأ الاسم واسم المحل ونوع النشاط ورقم الموبايل.'}; }
+    var digits = phone.replace(/[^0-9+]/g,'');
+    if(!/^\+?[0-9]{10,15}$/.test(digits)){ return {error:'رقم الموبايل مش صحيح. اكتبه بالأرقام، مثال: 01001234567'}; }
+    var lines = ['طلب حساب تجريبي مجاني - برنامج ميزان',
+      'الاسم: '+name,
+      'اسم الشركة أو المحل: '+biz,
+      'نوع النشاط: '+act,
+      'الموبايل: '+phone];
+    if(note){ lines.push('ملاحظة: '+note); }
+    return {url:'https://wa.me/201002655282?text='+encodeURIComponent(lines.join('\n'))};
+  };
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
+    var r = window.buildTrialWaLink();
+    if(r.error){ err.textContent = r.error; return; }
+    err.textContent = '';
+    window.open(r.url, '_blank', 'noopener');
+  });
+})();
+</script>
 </body>
 </html>
