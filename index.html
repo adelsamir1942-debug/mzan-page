@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>برنامج ميزان | Mizan — برنامج محاسبة وكاشير ونقاط بيع POS سحابي</title>
+<meta name="description" content="برنامج ميزان (Mizan): برنامج محاسبة سحابي وبرنامج كاشير ونقاط بيع POS لإدارة المحلات والشركات والسوبر ماركت في مصر. فواتير في أقل من نص دقيقة، إدارة مخزون وجرد بالباركود، خزينة ومحافظ وبنوك، وضريبة القيمة المضافة. 300 جنيه شهرياً ونسخة تجريبية مجانية على واتساب 01002655282.">
+<!-- تم ضبط رابط الموقع النهائي -->
+<link rel="canonical" href="https://adelsamir1942-debug.github.io/mzan-page/">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="ar_AR">
+<meta property="og:title" content="برنامج ميزان | Mizan — برنامج محاسبة وكاشير ونقاط بيع POS سحابي">
+<meta property="og:description" content="برنامج محاسبة وكاشير سحابي لإدارة الشركات والمحلات: فواتير، مخزون بالباركود، خزينة وبنوك، وضريبة القيمة المضافة. 300 جنيه في الشهر ونسخة تجريبية مجانية.">
+<meta property="og:url" content="https://adelsamir1942-debug.github.io/mzan-page/">
+<meta property="og:image" content="logo.png">
+<meta name="twitter:card" content="summary">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "ميزان",
+  "alternateName": "Mizan - برنامج ميزان",
+  "applicationCategory": "BusinessApplication",
+  "operatingSystem": "Web",
+  "inLanguage": "ar",
+  "description": "برنامج محاسبة سحابي وبرنامج كاشير ونقاط بيع (POS) لإدارة الشركات والمحلات: فواتير في أقل من نص دقيقة، تقارير أرباح يومية، إدارة مخزون وجرد بالباركود، متابعة الخزينة والمحافظ والبنوك، وصفحة لضريبة القيمة المضافة.",
+  "offers": {
+    "@type": "Offer",
+    "price": "300",
+    "priceCurrency": "EGP",
+    "description": "اشتراك شهري، وتوجد نسخة تجريبية مجانية"
+  }
+}
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --green-1: #12412f;
+  --green-2: #0a2b20;
+  --green-3: #071f17;
+  --ink: #10291f;
+  --ink-2: #4e5f56;
+  --gold: #d4af37;
+  --gold-2: #e6c65c;
+  --gold-dark: #c9a227;
+  --cream: #f8f5ec;
+  --hairline: #e4e0d5;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Cairo', 'Segoe UI', Tahoma, sans-serif;
+  background: var(--cream);
+  color: var(--ink);
+  line-height: 1.8;
+}
+.wrap { max-width: 880px; margin: 0 auto; padding: 24px 20px 64px; }
+
+/* Hero */
+.hero {
+  background: linear-gradient(165deg, var(--green-1) 0%, var(--green-2) 55%, var(--green-3) 100%);
+  border: 1px solid #1d5240;
+  border-radius: 24px;
+  padding: 40px 24px 36px;
+  text-align: center;
+  color: #f0ead6;
+}
+.hero img.logo {
+  width: 124px; height: 124px;
+  border-radius: 50%;
+  border: 3px solid var(--gold);
+  box-shadow: 0 6px 24px rgba(0,0,0,.35);
+  object-fit: cover;
+}
+.hero h1 {
+  font-size: 44px;
+  font-weight: 800;
+  color: var(--gold-2);
+  margin-top: 14px;
+}
+.hero .tag { font-size: 16px; color: #cfe0d4; }
+.hero .price {
+  display: inline-block;
+  margin-top: 16px;
+  padding: 6px 20px;
+  border: 1.5px solid var(--gold);
+  border-radius: 999px;
+  color: var(--gold-2);
+  font-weight: 700;
+  font-size: 15px;
+}
+.hero .intro {
+  font-size: 15px;
+  color: #dce8df;
+  max-width: 480px;
+  margin: 18px auto 0;
+}
+.btn-gold {
+  display: inline-block;
+  margin-top: 22px;
+  background: linear-gradient(180deg, #e2c464, var(--gold-dark));
+  color: #1a2f24;
+  font-weight: 700;
+  font-size: 16px;
+  padding: 14px 28px;
+  border-radius: 10px;
+  text-decoration: none;
+  box-shadow: 0 4px 14px rgba(0,0,0,.3);
+}
+.btn-gold:hover { filter: brightness(1.06); }
+
+/* Sections */
+section { margin-top: 44px; }
+h2 {
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--ink);
+  padding-bottom: 10px;
+  margin-bottom: 18px;
+  border-bottom: 2px solid var(--gold);
+  display: inline-block;
+}
+.shot, .videos video {
+  width: 100%;
+  border-radius: 12px;
+  border: 1px solid var(--hairline);
+  display: block;
+  background: #000;
+}
+.shot { background: #fff; }
+.caption { font-size: 13px; color: var(--ink-2); margin-top: 8px; }
+.videos { display: grid; gap: 20px; grid-template-columns: 1fr; }
+@media (min-width: 768px) { .videos { grid-template-columns: 1fr 1fr; align-items: start; } }
+
+/* Features */
+.features { display: grid; gap: 12px; grid-template-columns: 1fr; }
+@media (min-width: 768px) { .features { grid-template-columns: 1fr 1fr; } }
+.feature {
+  background: #fff;
+  border: 1px solid var(--hairline);
+  border-right: 4px solid var(--gold);
+  border-radius: 12px;
+  padding: 14px 18px;
+}
+.feature h3 { font-size: 16px; font-weight: 700; color: var(--ink); }
+.feature p { font-size: 14px; color: var(--ink-2); margin-top: 2px; }
+.soon {
+  margin-top: 16px;
+  background: #fdf6e0;
+  border: 1px solid var(--gold);
+  border-radius: 12px;
+  padding: 14px 18px;
+  font-size: 14px;
+  color: #6b5714;
+}
+.soon strong { color: #8a6d1c; }
+
+/* Facts */
+.facts { display: grid; gap: 12px; grid-template-columns: 1fr; }
+@media (min-width: 768px) { .facts { grid-template-columns: 1fr 1fr; } }
+.fact {
+  background: #fff;
+  border: 1px solid var(--hairline);
+  border-radius: 12px;
+  padding: 12px 18px;
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 15px;
+}
+.fact .k { color: var(--ink-2); }
+.fact .v { font-weight: 700; color: var(--green-1); text-align: left; }
+
+/* Steps */
+.steps { counter-reset: step; display: grid; gap: 12px; }
+.step {
+  background: #fff;
+  border: 1px solid var(--hairline);
+  border-radius: 12px;
+  padding: 12px 18px;
+  font-size: 15px;
+}
+.step::before {
+  counter-increment: step;
+  content: counter(step);
+  display: inline-block;
+  width: 26px; height: 26px;
+  line-height: 26px;
+  text-align: center;
+  background: var(--green-2);
+  color: var(--gold-2);
+  border-radius: 50%;
+  font-weight: 700;
+  margin-left: 10px;
+}
+.cta-row { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 20px; align-items: center; }
+.btn-green {
+  background: var(--green-2);
+  color: var(--gold-2);
+  font-weight: 700;
+  font-size: 15px;
+  padding: 12px 24px;
+  border-radius: 10px;
+  text-decoration: none;
+  border: none;
+}
+.btn-outline {
+  background: #fff;
+  color: var(--green-1);
+  font-weight: 700;
+  font-size: 15px;
+  padding: 12px 24px;
+  border-radius: 10px;
+  text-decoration: none;
+  border: 1.5px solid var(--green-1);
+}
+.phone-line { font-size: 15px; margin-top: 14px; }
+.phone-line bdi { font-weight: 800; color: var(--green-1); }
+
+/* Footer */
+footer {
+  margin-top: 48px;
+  padding-top: 18px;
+  border-top: 1px solid var(--hairline);
+  font-size: 13px;
+  color: var(--ink-2);
+  text-align: center;
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="hero">
+    <img class="logo" src="logo.png" alt="لوجو برنامج ميزان Mizan للمحاسبة ونقاط البيع: ميزان دهبي على خلفية خضراء غامقة">
+    <h1>برنامج ميزان (Mizan) — محاسبة وكاشير ونقاط بيع سحابي</h1>
+    <div class="tag">لإدارة الشركات والمحلات: فواتير، مخزون، خزينة، وضريبة القيمة المضافة</div>
+    <div class="price">300 جنيه في الشهر</div>
+    <p class="intro">ميزان برنامج محاسبة سحابي وبرنامج كاشير (نقاط بيع POS) بيطلّعلك الفاتورة في أقل من نص دقيقة ويخليك تعرف كسبت كام النهاردة في ثانية. بيدير المخزون والجرد بالباركود، والخزينة والمحافظ والبنوك، وفيه صفحة بتحسب ضريبة القيمة المضافة تلقائياً. مناسب لكل أنواع المحلات والأنشطة. جرّب النسخة التجريبية المجانية عن طريق واتساب.</p>
+    <a class="btn-gold" href="https://wa.me/201002655282">اطلب النسخة التجريبية على واتساب</a>
+  </div>
+
+  <section id="screenshot">
+    <h2>شكل برنامج الكاشير ونقاط البيع (POS)</h2>
+    <img class="shot" src="pos-screen.png" alt="شاشة الكاشير ونقاط البيع POS في برنامج ميزان Mizan: فواتير المبيعات، جدول الأصناف، الصافي النهائي وطرق السداد">
+    <div class="caption">شاشة فواتير المبيعات ونقاط البيع (POS) في ميزان: جدول الأصناف، الصافي النهائي، وطرق السداد.</div>
+  </section>
+
+  <section id="videos">
+    <h2>شوف ميزان شغال</h2>
+    <div class="videos">
+      <figure>
+        <video controls playsinline preload="none" poster="poster-demo.jpg" src="mizan-demo.mp4"></video>
+        <figcaption class="caption">شرح سريع بالصوت لشاشة الفاتورة ونقاط البيع، دقيقة تقريباً.</figcaption>
+      </figure>
+      <figure>
+        <video controls playsinline preload="none" poster="poster-walkthrough.jpg" src="mizan-walkthrough.mp4"></video>
+        <figcaption class="caption">جولة كاملة في ميزان من الكمبيوتر، دقيقتين ونص تقريباً.</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section id="features">
+    <h2>مميزات برنامج ميزان للمحاسبة وإدارة المخزون</h2>
+    <div class="features">
+      <div class="feature"><h3>فاتورة في أقل من نص دقيقة</h3><p>شاشة نقاط البيع بتجهّز الفاتورة كاملة في ثواني.</p></div>
+      <div class="feature"><h3>اعرف كسبت كام النهاردة في ثانية</h3><p>تقارير يومية بتوضّح مبيعاتك وأرباحك.</p></div>
+      <div class="feature"><h3>العميل النقدي ثابت</h3><p>مش هتكتب بيانات العميل كل مرة.</p></div>
+      <div class="feature"><h3>تغيير السعر في ثانية</h3><p>عدّل سعر أي صنف فوراً من غير تعقيد.</p></div>
+      <div class="feature"><h3>كل طرق الدفع موجودة</h3><p>تحويل بنكي، محافظ إلكترونية، وإنستا باي.</p></div>
+      <div class="feature"><h3>الفاتورة بتتطبع بضغطة واحدة</h3><p>اطبع من الموبايل أو الكمبيوتر.</p></div>
+      <div class="feature"><h3>يشتغل على الموبايل والكمبيوتر</h3><p>برنامج سحابي، تشتغل من أي مكان.</p></div>
+      <div class="feature"><h3>شاشة موبايل لمندوبي البيع في السيارات</h3><p>المندوب يسجّل مبيعاته من موبايله، وصاحب النشاط يتابع مبيعات المناديب لحظة بلحظة من أي مكان.</p></div>
+      <div class="feature"><h3>جرد المخزون بالقيود أو بالباركود</h3><p>الجرد بيتم من خلال القيود بالطريقة المعتادة، وبالباركود كمان لتسهيله.</p></div>
+      <div class="feature"><h3>الخزينة والمحافظ الإلكترونية والبنك في برنامج واحد</h3><p>تابع كل حركاتك المالية في مكان واحد، مع إمكانية التحويل بين الحسابات.</p></div>
+      <div class="feature"><h3>صفحة خاصة بضريبة القيمة المضافة</h3><p>بتحسب تلقائياً اللي اتجمّع من المبيعات واللي اتدفع في المشتريات.</p></div>
+      <div class="feature"><h3>بيناسب كل أنواع المحلات والأنشطة</h3><p>ومميزات تانية كتير مستنياك تكتشفها.</p></div>
+    </div>
+    <div class="soon"><strong>قريباً:</strong> نسخ مخصصة للصيدليات والدكاترة والسناتر التعليمية.</div>
+  </section>
+
+  <section id="pricing">
+    <h2>سعر برنامج ميزان والنسخة التجريبية المجانية</h2>
+    <div class="facts">
+      <div class="fact"><span class="k">الاشتراك الشهري</span><span class="v">300 جنيه</span></div>
+      <div class="fact"><span class="k">النسخة التجريبية</span><span class="v">مجانية</span></div>
+      <div class="fact"><span class="k">المنصات</span><span class="v">الموبايل والكمبيوتر</span></div>
+      <div class="fact"><span class="k">طرق الدفع</span><span class="v">تحويل بنكي، محافظ إلكترونية، إنستا باي</span></div>
+      <div class="fact"><span class="k">التواصل</span><span class="v" dir="ltr">واتساب 01002655282</span></div>
+    </div>
+  </section>
+
+  <section id="start">
+    <h2>تبدأ إزاي</h2>
+    <div class="steps">
+      <div class="step">ابعتلنا رسالة على واتساب إنك عايز تجرب ميزان.</div>
+      <div class="step">جرّب النسخة التجريبية المجانية بنفسك.</div>
+      <div class="step">تابع الصفحة عشان يوصلك كل جديد.</div>
+    </div>
+    <p class="phone-line">ابعت رسالة دلوقتي على واتساب على الرقم <bdi>01002655282</bdi> واطلب النسخة التجريبية المجانية.</p>
+    <div class="cta-row">
+      <a class="btn-green" href="https://wa.me/201002655282">اطلب النسخة التجريبية على واتساب</a>
+    </div>
+  </section>
+
+
+  <section id="faq">
+    <h2>أسئلة شائعة عن برنامج ميزان</h2>
+    <div class="features">
+      <div class="feature"><h3>سعر برنامج ميزان كام؟</h3><p>الاشتراك الشهري 300 جنيه، وفي نسخة تجريبية مجانية تطلبها على واتساب 01002655282.</p></div>
+      <div class="feature"><h3>ميزان بيشتغل على إيه؟</h3><p>برنامج سحابي يشتغل على الموبايل والكمبيوتر، تتابع شغلك من أي مكان.</p></div>
+      <div class="feature"><h3>هل ميزان مناسب لمحل صغير أو سوبر ماركت؟</h3><p>ميزان بيناسب كل أنواع المحلات والأنشطة: برنامج كاشير ونقاط بيع ومحاسبة وإدارة مخزون في برنامج واحد.</p></div>
+      <div class="feature"><h3>إزاي أبدأ مع ميزان؟</h3><p>ابعت رسالة واتساب على 01002655282 واطلب النسخة التجريبية المجانية وجرّب البرنامج بنفسك.</p></div>
+      <div class="feature"><h3>What is Mizan?</h3><p dir="ltr">Mizan is a cloud accounting and point of sale (POS) software for shops, supermarkets and small businesses in Egypt: fast invoicing, inventory management with barcode stock-taking, cashbox and bank tracking, and VAT reports.</p></div>
+    </div>
+  </section>
+
+  <section id="social">
+    <h2>تابعنا</h2>
+    <div class="cta-row">
+      <a class="btn-outline" href="https://www.facebook.com/share/1JmzXJTFwf/">تابعنا على فيسبوك</a>
+      <a class="btn-outline" href="https://www.tiktok.com/@adel7986">تابعنا على تيك توك</a>
+    </div>
+  </section>
+
+  <footer>السعر والمميزات كما هي في 26 نوفمبر 2026.</footer>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+# بعد رفع الموقع، استبدل USERNAME باسم حسابك على GitHub
+Sitemap: https://adelsamir1942-debug.github.io/mzan-page/sitemap.xml
