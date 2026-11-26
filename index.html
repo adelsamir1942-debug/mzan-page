@@ -39,21 +39,22 @@
 <style>
 :root {
   color-scheme: light;
-  --green-1: #12412f;
-  --green-2: #0a2b20;
-  --green-3: #071f17;
-  --ink: #10291f;
-  --ink-2: #4e5f56;
+  --green-1: #16294f;
+  --green-2: #0f1d3a;
+  --green-3: #091226;
+  --ink: #152238;
+  --ink-2: #55617a;
   --gold: #d4af37;
   --gold-2: #e6c65c;
   --gold-dark: #c9a227;
-  --cream: #f8f5ec;
-  --hairline: #e4e0d5;
+  --cream: #f6f3ea;
+  --hairline: #e6e1d3;
 }
 * { box-sizing: border-box; margin: 0; padding: 0; }
+html { background: #f6f3ea; }
 body {
   font-family: 'Cairo', 'Segoe UI', Tahoma, sans-serif;
-  background: var(--cream);
+  background: #f6f3ea;
   color: var(--ink);
   line-height: 1.8;
 }
@@ -62,11 +63,11 @@ body {
 /* Hero */
 .hero {
   background: linear-gradient(165deg, var(--green-1) 0%, var(--green-2) 55%, var(--green-3) 100%);
-  border: 1px solid #1d5240;
+  border: 1px solid #233c6b;
   border-radius: 24px;
   padding: 40px 24px 36px;
   text-align: center;
-  color: #f0ead6;
+  color: #e6c65c;
 }
 .hero img.logo {
   width: 124px; height: 124px;
@@ -81,7 +82,7 @@ body {
   color: var(--gold-2);
   margin-top: 14px;
 }
-.hero .tag { font-size: 16px; color: #cfe0d4; }
+.hero .tag { font-size: 16px; color: #cdd8ee; }
 .hero .price {
   display: inline-block;
   margin-top: 16px;
@@ -94,7 +95,7 @@ body {
 }
 .hero .intro {
   font-size: 15px;
-  color: #dce8df;
+  color: #dbe3f2;
   max-width: 480px;
   margin: 18px auto 0;
 }
@@ -107,8 +108,8 @@ body {
   line-height: 1.6;
   background: #d4af37 !important;
   background-image: none !important;
-  color: #081f15 !important;
-  -webkit-text-fill-color: #081f15 !important;
+  color: #101f3c !important;
+  -webkit-text-fill-color: #101f3c !important;
   forced-color-adjust: none;
   font-weight: 700;
   font-size: 16px;
@@ -156,14 +157,14 @@ h2 {
 .feature p { font-size: 14px; color: var(--ink-2); margin-top: 2px; }
 .soon {
   margin-top: 16px;
-  background: #fdf6e0;
+  background: #ffffff;
   border: 1px solid var(--gold);
   border-radius: 12px;
   padding: 14px 18px;
   font-size: 14px;
-  color: #6b5714;
+  color: #16294f;
 }
-.soon strong { color: #8a6d1c; }
+.soon strong { color: #0f1d3a; }
 
 /* Facts */
 .facts { display: grid; gap: 12px; grid-template-columns: 1fr; }
