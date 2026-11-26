@@ -281,6 +281,8 @@ footer {
         <input id="t-branches" name="branches" type="number" min="1" inputmode="numeric" dir="ltr">
         <label for="t-devices">عدد الأجهزة المطلوب تشغيلها</label>
         <input id="t-devices" name="devices" type="number" min="1" inputmode="numeric" dir="ltr">
+        <label for="t-ref">كود المسوّق (اختياري)</label>
+        <input id="t-ref" name="ref" type="text" placeholder="لو معاك كود من مسوّق ميزان">
         <label for="t-note">ملاحظة (اختياري)</label>
         <textarea id="t-note" name="note"></textarea>
         <div class="trial-err" id="trial-err"></div>
@@ -376,7 +378,7 @@ footer {
     </div>
   </section>
 
-  <footer>السعر والمميزات كما هي في 26 نوفمبر 2026.</footer>
+  <footer>السعر والمميزات كما هي في 26 نوفمبر 2026.<br><a href="marketers.html" style="color: var(--green-1); font-weight: 700;">انضم كمسوّق واكسب عمولة شهرية عن كل مشترك</a></footer>
 
 </div>
 
@@ -388,7 +390,7 @@ footer {
   toggle.addEventListener('click', function(){ form.classList.toggle('open'); });
   function v(id){ return document.getElementById(id).value.trim(); }
   window.buildTrialWaLink = function(){
-    var name=v('t-name'), biz=v('t-biz'), act=v('t-act'), phone=v('t-phone'), city=v('t-city'), branches=v('t-branches'), devices=v('t-devices'), note=v('t-note');
+    var name=v('t-name'), biz=v('t-biz'), act=v('t-act'), phone=v('t-phone'), city=v('t-city'), branches=v('t-branches'), devices=v('t-devices'), ref=v('t-ref'), note=v('t-note');
     if(!name || !biz || !act || !phone || !city){ return {error:'من فضلك املأ الاسم واسم المحل ونوع النشاط ورقم الموبايل والمدينة.'}; }
     if(branches && !/^[0-9]{1,4}$/.test(branches)){ return {error:'عدد الفروع لازم يكون رقم.'}; }
     if(devices && !/^[0-9]{1,4}$/.test(devices)){ return {error:'عدد الأجهزة لازم يكون رقم.'}; }
@@ -402,6 +404,7 @@ footer {
       'المدينة: '+city];
     if(branches){ lines.push('عدد الفروع: '+branches); }
     if(devices){ lines.push('عدد الأجهزة المطلوب تشغيلها: '+devices); }
+    if(ref){ lines.push('كود المسوّق: '+ref); }
     if(note){ lines.push('ملاحظة: '+note); }
     return {url:'https://wa.me/201002655282?text='+encodeURIComponent(lines.join('\n'))};
   };
