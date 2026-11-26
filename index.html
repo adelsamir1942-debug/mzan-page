@@ -260,6 +260,12 @@ footer {
         <input id="t-act" name="act" type="text" placeholder="مثال: سوبر ماركت، ملابس، عطارة">
         <label for="t-phone">رقم الموبايل</label>
         <input id="t-phone" name="phone" type="tel" inputmode="tel" dir="ltr" autocomplete="tel" placeholder="01xxxxxxxxx">
+        <label for="t-city">المدينة</label>
+        <input id="t-city" name="city" type="text" autocomplete="address-level2">
+        <label for="t-branches">عدد الفروع</label>
+        <input id="t-branches" name="branches" type="number" min="1" inputmode="numeric" dir="ltr">
+        <label for="t-devices">عدد الأجهزة المطلوب تشغيلها</label>
+        <input id="t-devices" name="devices" type="number" min="1" inputmode="numeric" dir="ltr">
         <label for="t-note">ملاحظة (اختياري)</label>
         <textarea id="t-note" name="note"></textarea>
         <div class="trial-err" id="trial-err"></div>
@@ -365,15 +371,20 @@ footer {
   toggle.addEventListener('click', function(){ form.classList.toggle('open'); });
   function v(id){ return document.getElementById(id).value.trim(); }
   window.buildTrialWaLink = function(){
-    var name=v('t-name'), biz=v('t-biz'), act=v('t-act'), phone=v('t-phone'), note=v('t-note');
-    if(!name || !biz || !act || !phone){ return {error:'من فضلك املأ الاسم واسم المحل ونوع النشاط ورقم الموبايل.'}; }
+    var name=v('t-name'), biz=v('t-biz'), act=v('t-act'), phone=v('t-phone'), city=v('t-city'), branches=v('t-branches'), devices=v('t-devices'), note=v('t-note');
+    if(!name || !biz || !act || !phone || !city){ return {error:'من فضلك املأ الاسم واسم المحل ونوع النشاط ورقم الموبايل والمدينة.'}; }
+    if(branches && !/^[0-9]{1,4}$/.test(branches)){ return {error:'عدد الفروع لازم يكون رقم.'}; }
+    if(devices && !/^[0-9]{1,4}$/.test(devices)){ return {error:'عدد الأجهزة لازم يكون رقم.'}; }
     var digits = phone.replace(/[^0-9+]/g,'');
     if(!/^\+?[0-9]{10,15}$/.test(digits)){ return {error:'رقم الموبايل مش صحيح. اكتبه بالأرقام، مثال: 01001234567'}; }
     var lines = ['طلب حساب تجريبي مجاني - برنامج ميزان',
       'الاسم: '+name,
       'اسم الشركة أو المحل: '+biz,
       'نوع النشاط: '+act,
-      'الموبايل: '+phone];
+      'الموبايل: '+phone,
+      'المدينة: '+city];
+    if(branches){ lines.push('عدد الفروع: '+branches); }
+    if(devices){ lines.push('عدد الأجهزة المطلوب تشغيلها: '+devices); }
     if(note){ lines.push('ملاحظة: '+note); }
     return {url:'https://wa.me/201002655282?text='+encodeURIComponent(lines.join('\n'))};
   };
