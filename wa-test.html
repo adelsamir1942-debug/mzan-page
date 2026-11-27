@@ -31,7 +31,7 @@ a.alt{background:#0d1b3e;color:#fff}
 <div>Android: <b id="d-and">?</b> | iOS: <b id="d-ios">?</b> | InApp: <b id="d-iap">?</b> | wv: <b id="d-wv">?</b></div>
 <div>primary scheme: <b id="d-scheme">?</b></div>
 <div>href: <span id="d-href">...</span></div>
-<div>length: <b id="d-len">?</b></div>
+<div>msg chars: <b id="d-len-msg">?</b> | short href: <b id="d-len">?</b> | ultra href: <b id="d-len-ultra">?</b> | long href: <b id="d-len-long">?</b></div>
 </div>
 <a class="btn" id="d1" href="#">8) <span dir="ltr">whatsapp://</span> بالرسالة الطويلة</a>
 <a class="btn alt" id="d2" href="#">9) <span dir="ltr">intent://</span> بالرسالة الطويلة</a>
@@ -40,6 +40,9 @@ a.alt{background:#0d1b3e;color:#fff}
 <a class="btn" id="d5" href="#">12) <span dir="ltr">intent send</span> بالرسالة الطويلة (com.whatsapp)</a>
 <a class="btn alt" id="d6" href="#">13) <span dir="ltr">intent wa.me</span> بالرسالة الطويلة (com.whatsapp.w4b)</a>
 <a class="btn" id="d7" href="#">14) <span dir="ltr">intent wa.me</span> برسالة قصيرة (com.whatsapp)</a>
+<a class="btn alt" id="d8" href="#">15) <span dir="ltr">intent wa.me</span> بالرسالة الجديدة القصيرة (نفس اللي الفورم بيبعتها)</a>
+<a class="btn" id="d9" href="#">16) <span dir="ltr">whatsapp://</span> بالرسالة الجديدة القصيرة</a>
+<a class="btn alt" id="d10" href="#">17) <span dir="ltr">intent wa.me</span> بأقصر رسالة ممكنة (com.whatsapp)</a>
 <script>
 (function(){
   var ua = navigator.userAgent || '';
@@ -48,26 +51,34 @@ a.alt{background:#0d1b3e;color:#fff}
   var isInApp = /; wv\)/.test(ua) ||
     (isAndroid && /Version\/[\d.]+/.test(ua) && /Chrome\/[\d.]+/.test(ua)) ||
     /TikTok|musical_ly|BytedanceWebview|trill|Aweme|Instagram|FBAN|FBAV|FB_IAB|Line|Snapchat/i.test(ua);
-  var msg = ['طلب حساب تجريبي مجاني - برنامج ميزان','الاسم: أحمد محمد','اسم الشركة أو المحل: محل النور','نوع النشاط: سوبر ماركت','الموبايل: 01001234567','المدينة: المنصورة','عدد الفروع: 2','عدد الأجهزة المطلوب تشغيلها: 3','موافق على الشروط والأحكام: نعم'].join('\n');
-  var q = encodeURIComponent(msg);
-  var primary = isAndroid ? 'intent://wa.me/201002655282?text=' + q + '#Intent;scheme=https;package=com.whatsapp;end'
-    : (isIOS && isInApp) ? 'whatsapp://send?phone=201002655282&text=' + q
-    : 'https://wa.me/201002655282?text=' + q;
+  var SHORT = 'Mizan trial-أحمد محمد-محل النور-سوبر ماركت-01001234567-المنصورة';
+  var LONG = ['طلب حساب تجريبي مجاني - برنامج ميزان','الاسم: أحمد محمد','اسم الشركة أو المحل: محل النور','نوع النشاط: سوبر ماركت','الموبايل: 01001234567','المدينة: المنصورة','عدد الفروع: 2','عدد الأجهزة المطلوب تشغيلها: 3','موافق على الشروط والأحكام: نعم'].join('\n');
+  var qS = encodeURIComponent(SHORT), qL = encodeURIComponent(LONG);
+  function waMe(q, pkg){ return 'intent://wa.me/201002655282?text=' + q + '#Intent;scheme=https;package=' + pkg + ';end'; }
+  function scheme(q){ return 'whatsapp://send?phone=201002655282&text=' + q; }
+  function set(id, href){ document.getElementById(id).setAttribute('href', href); }
+  var primary = isAndroid ? waMe(qS, 'com.whatsapp') : (isIOS && isInApp) ? scheme(qS) : 'https://wa.me/201002655282?text=' + qS;
   document.getElementById('d-ua').textContent = ua;
   document.getElementById('d-and').textContent = isAndroid ? 'yes' : 'no';
   document.getElementById('d-ios').textContent = isIOS ? 'yes' : 'no';
   document.getElementById('d-iap').textContent = isInApp ? 'yes' : 'no';
   document.getElementById('d-wv').textContent = /; wv\)/.test(ua) ? 'yes' : 'no';
   document.getElementById('d-scheme').textContent = primary.split('?')[0];
-  document.getElementById('d-href').textContent = primary.length > 150 ? primary.slice(0,100) + ' ... ' + primary.slice(-40) : primary;
+  document.getElementById('d-href').textContent = primary.length > 150 ? primary.slice(0,90) + ' ... ' + primary.slice(-35) : primary;
   document.getElementById('d-len').textContent = primary.length;
-  document.getElementById('d1').setAttribute('href', 'whatsapp://send?phone=201002655282&text=' + q);
-  document.getElementById('d2').setAttribute('href', 'intent://send?phone=201002655282&text=' + q + '#Intent;scheme=whatsapp;end');
-  document.getElementById('d3').setAttribute('href', 'whatsapp://send?phone=201002655282');
-  document.getElementById('d4').setAttribute('href', 'intent://wa.me/201002655282?text=' + q + '#Intent;scheme=https;package=com.whatsapp;end');
-  document.getElementById('d5').setAttribute('href', 'intent://send?phone=201002655282&text=' + q + '#Intent;scheme=whatsapp;package=com.whatsapp;end');
-  document.getElementById('d6').setAttribute('href', 'intent://wa.me/201002655282?text=' + q + '#Intent;scheme=https;package=com.whatsapp.w4b;end');
-  document.getElementById('d7').setAttribute('href', 'intent://wa.me/201002655282?text=' + encodeURIComponent('تجربة') + '#Intent;scheme=https;package=com.whatsapp;end');
+  document.getElementById('d-len-long').textContent = (isAndroid ? waMe(qL, 'com.whatsapp') : scheme(qL)).length;
+  document.getElementById('d-len-msg').textContent = SHORT.length + ' / ' + LONG.length;
+  set('d1', scheme(qL));
+  set('d2', 'intent://send?phone=201002655282&text=' + qL + '#Intent;scheme=whatsapp;end');
+  set('d3', 'whatsapp://send?phone=201002655282');
+  set('d4', waMe(qL, 'com.whatsapp'));
+  set('d5', 'intent://send?phone=201002655282&text=' + qL + '#Intent;scheme=whatsapp;package=com.whatsapp;end');
+  set('d6', waMe(qL, 'com.whatsapp.w4b'));
+  set('d7', waMe(encodeURIComponent('تجربة'), 'com.whatsapp'));
+  set('d8', waMe(qS, 'com.whatsapp'));
+  set('d9', scheme(qS));
+  set('d10', waMe(encodeURIComponent('Mizan-أحمد-01001234567'), 'com.whatsapp'));
+  document.getElementById('d-len-ultra').textContent = waMe(encodeURIComponent('Mizan-أحمد-01001234567'), 'com.whatsapp').length;
 })();
 </script>
 </body>

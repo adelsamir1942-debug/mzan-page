@@ -450,18 +450,10 @@ footer {
     if(!document.getElementById('t-agree').checked){ return {error:'لازم تعلّم على الإقرار بصحة البيانات وقبول الشروط والأحكام قبل الإرسال.'}; }
     var digits = phone.replace(/[^0-9+]/g,'');
     if(!/^\+?[0-9]{10,15}$/.test(digits)){ return {error:'رقم الموبايل مش صحيح. اكتبه بالأرقام، مثال: 01001234567'}; }
-    var lines = ['طلب حساب تجريبي مجاني - برنامج ميزان',
-      'الاسم: '+name,
-      'اسم الشركة أو المحل: '+biz,
-      'نوع النشاط: '+act,
-      'الموبايل: '+phone,
-      'المدينة: '+city];
-    if(branches){ lines.push('عدد الفروع: '+branches); }
-    if(devices){ lines.push('عدد الأجهزة المطلوب تشغيلها: '+devices); }
-    if(ref){ lines.push('كود الشريك: '+ref); }
-    if(note){ lines.push('ملاحظة: '+note); }
-    lines.push('موافق على الشروط والأحكام: نعم');
-    return {url:'https://wa.me/201002655282?text='+encodeURIComponent(lines.join('\n'))};
+    var clean = function(x){ return String(x).replace(/[\r\n]+/g,' ').replace(/-/g,' ').trim(); };
+    var parts = ['Mizan trial', clean(name), clean(biz), clean(act), clean(phone), clean(city)];
+    if(ref){ parts.push(clean(ref)); }
+    return {url:'https://wa.me/201002655282?text='+encodeURIComponent(parts.join('-'))};
   };
   document.querySelectorAll('[data-open-trial]').forEach(function(a){
     a.addEventListener('click', function(e){

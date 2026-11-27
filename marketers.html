@@ -342,17 +342,9 @@ footer {
     var payout = form.querySelector('input[name="payout"]:checked');
     if(!payout){ return {error:'اختار طريقة استلام العمولة.'}; }
     if(!document.getElementById('m-terms').checked){ return {error:'لازم تعلّم على الإقرار بصحة البيانات وقبول الشروط عشان التسجيل يتبعت.'}; }
-    var lines = ['طلب تسجيل مسوّق - برنامج ميزان',
-      'الاسم بالكامل: '+name,
-      'العمر: '+age,
-      'رقم الواتساب: '+phone,
-      'المحافظة / المدينة: '+city,
-      'حساب تيك توك أو فيسبوك: '+social];
-    if(followers){ lines.push('عدد المتابعين تقريباً: '+followers); }
-    if(exp){ lines.push('خبرة في التسويق أو المبيعات: '+exp); }
-    lines.push('طريقة استلام العمولة: '+(payout.value === 'vodafone' ? 'فودافون كاش' : 'إنستا باي'));
-    lines.push('موافق على الشروط: نعم');
-    return {url:'https://wa.me/201002655282?text='+encodeURIComponent(lines.join('\n'))};
+    var clean = function(x){ return String(x).replace(/[\r\n]+/g,' ').replace(/-/g,' ').trim(); };
+    var parts = ['Mizan partner', clean(name), clean(age), clean(phone), clean(city), clean(social), (payout.value === 'vodafone' ? 'Vodafone' : 'InstaPay')];
+    return {url:'https://wa.me/201002655282?text='+encodeURIComponent(parts.join('-'))};
   }
   var sendLink = document.getElementById('reg-send');
   var helpRow = document.getElementById('reg-help-row');
