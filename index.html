@@ -458,7 +458,7 @@ footer {
   var toggle = document.getElementById('trial-toggle');
   var form = document.getElementById('trial-form');
   var err = document.getElementById('trial-err');
-  var BUILD = '2026-11-27-v7';
+  var BUILD = '2026-11-27-v8';
   var DEBUG = /[?&]debug=1/.test(location.search);
   var dbgEl = null;
   function logDbg(t){ if(dbgEl){ dbgEl.textContent += t + '\n'; } }
@@ -557,10 +557,23 @@ footer {
   }
 
   function waQ(url){ var k = url.indexOf('?text='); return k < 0 ? '' : url.slice(k + 6); }
+  // Android intent opens the WhatsApp app directly (chat with the prefilled text).
+  // S.browser_fallback_url keeps a safe path if the app is not installed or the
+  // WebView refuses the intent, so the user still lands on wa.me.
+  function directWaLink(r){
+    var q = waQ(r.url);
+    if(isAndroid){
+      return 'intent://send?phone=201002655282&text=' + q +
+        '#Intent;scheme=whatsapp;package=com.whatsapp;S.browser_fallback_url=' +
+        encodeURIComponent(r.url) + ';end';
+    }
+    if(isIOS){ return 'whatsapp://send?phone=201002655282&text=' + q; }
+    return r.url;
+  }
   var touched = false;
   function refreshWaLink(){
     var r = window.buildTrialWaLink();
-    var next = r.error ? '' : r.url;
+    var next = r.error ? '' : directWaLink(r);
     if(next && sendLink.getAttribute('href') !== next){ sendLink.setAttribute('href', next); }
     var ok = !!next;
     sendLink.style.opacity = ok ? '1' : '0.6';
@@ -581,14 +594,19 @@ footer {
     helpRow.hidden = false;
   }
 
-  // Fix v7: no preventDefault on the valid state. A native <a href> click is the
-  // only user gesture in-app browsers (TikTok) reliably let through. The old
-  // window.open(..., '_system') + location.href combo opened a blank popup and
-  // was silently blocked inside TikTok WebView.
+  // Fix v8: native click on the Android intent / iOS whatsapp deep link.
+  // If the OS never leaves the page, fall back to the universal wa.me link so
+  // the user still reaches WhatsApp instead of a dead tap.
   sendLink.addEventListener('click', function(e){
     var r = window.buildTrialWaLink();
     if(r.error){ e.preventDefault(); touched = true; err.textContent = r.error; return; }
     if(DEBUG){ logDbg('native click -> ' + sendLink.getAttribute('href')); }
+    if(isAndroid || isIOS){
+      setTimeout(function(){
+        if(document.visibilityState !== 'visible'){ return; }
+        location.href = r.url;
+      }, 1200);
+    }
   });
   helpLink.addEventListener('click', function(e){ e.preventDefault(); showFallback(); });
   fbCopy.addEventListener('click', function(e){
