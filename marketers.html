@@ -248,6 +248,11 @@ footer {
         <label class="check-row"><input type="checkbox" id="m-terms"> أوافق على شروط برنامج شركاء ميزان المكتوبة في الصفحة دي <span class="req">*</span></label>
         <div class="reg-err" id="reg-err"></div>
         <button type="submit" class="btn-gold">ابعت التسجيل على واتساب</button>
+        <div id="wa-fallback" style="display:none; margin-top:10px; font-size:14px; line-height:1.9;">
+          لو الواتساب ما فتحش، انسخ الرسالة وابعتها لينا على <bdi dir="ltr">01002655282</bdi>
+          <button type="button" style="display:inline-block; margin-inline-start:8px; padding:6px 14px; border:none; border-radius:8px; background:#d4af37; color:#101f3c; font-weight:700; cursor:pointer;">انسخ الرسالة</button>
+          <div id="wa-fallback-hint" style="display:none; margin-top:6px; color:#b3261e;">لو انت فاتح من تيك توك أو فيسبوك، دوس على ⋮ فوق واختار "فتح في المتصفح" الأول.</div>
+        </div>
         <p class="reg-note">بعد الضغط هيتفتح واتساب بالرسالة جاهزة، اضغط إرسال ويوصلنا طلبك ونرد عليك بالكود الخاص بيك. مفيش بيانات بتتسجل على الموقع.</p>
       </form>
     </div>
@@ -335,8 +340,39 @@ footer {
     if(exp){ lines.push('خبرة في التسويق أو المبيعات: '+exp); }
     lines.push('طريقة استلام العمولة: '+(payout.value === 'vodafone' ? 'فودافون كاش' : 'إنستا باي'));
     lines.push('موافق على الشروط: نعم');
+  function openWhatsApp(text, fbId){
+    var enc = encodeURIComponent(text);
+    var ua = navigator.userAgent || '';
+    var isMobile = /Android|iPhone|iPad|iPod/i.test(ua);
+    var isInApp = /TikTok|Instagram|FBAN|FBAV|Line|Snapchat/i.test(ua);
+    var webUrl = (isMobile ? 'https://api.whatsapp.com/send?phone=201002655282&text=' : 'https://web.whatsapp.com/send?phone=201002655282&text=') + enc;
+    var fb = document.getElementById(fbId);
+    var copyBtn = fb.querySelector('button');
+    fb.style.display = 'block';
+    copyBtn.onclick = function(){
+      var done = function(){ copyBtn.textContent = 'اتنسخت ✓'; };
+      if(navigator.clipboard && navigator.clipboard.writeText){ navigator.clipboard.writeText(text).then(done, done); }
+      else {
+        var ta = document.createElement('textarea');
+        ta.value = text; document.body.appendChild(ta); ta.select();
+        try { document.execCommand('copy'); } catch(e){}
+        document.body.removeChild(ta); done();
+      }
+    };
+    if(isInApp){
+      document.getElementById(fbId+'-hint').style.display = 'block';
+      setTimeout(function(){
+        if(!document.hidden){ window.location.href = webUrl; }
+      }, 1500);
+      return;
+    }
+    window.location.href = 'whatsapp://send?phone=201002655282&text=' + enc;
+    setTimeout(function(){
+      if(!document.hidden){ window.location.href = webUrl; }
+    }, 1500);
+  }
     err.textContent = '';
-    window.open('https://wa.me/201002655282?text='+encodeURIComponent(lines.join('\n')), '_blank', 'noopener');
+    openWhatsApp(lines.join('\n'), 'wa-fallback');
   });
 })();
 </script>
