@@ -2,6 +2,9 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="color-scheme" content="only light">
 <title>برنامج ميزان | Mizan — برنامج محاسبة وكاشير ومخازن ونقاط بيع POS سحابي</title>
@@ -320,7 +323,7 @@ footer {
         <textarea id="t-note" name="note"></textarea>
         <div class="trial-err" id="trial-err"></div>
         <label class="check-row" for="t-agree"><input type="checkbox" id="t-agree"> <span>أقر بصحة بياناتي وقبول <a href="#terms">الشروط والأحكام</a></span></label>
-        <a class="btn-gold" id="trial-send" href="https://wa.me/201002655282">ابعت الطلب على واتساب</a>
+        <a class="btn-gold" id="trial-send" href="intent://wa.me/201002655282?text=Mizan%20trial#Intent;scheme=https;package=com.whatsapp;end">ابعت الطلب على واتساب</a>
         <p class="trial-note">بعد الضغط هيتفتح واتساب بالرسالة جاهزة، اضغط إرسال ويوصلنا طلبك. مفيش بيانات بتتسجل على الموقع.</p>
         <p class="wa-help" id="trial-help-row"><a href="#" id="trial-help">الزرار مفتحش واتساب؟</a></p>
         <div class="wa-fb" id="trial-fb" hidden>
@@ -440,6 +443,7 @@ footer {
   var toggle = document.getElementById('trial-toggle');
   var form = document.getElementById('trial-form');
   var err = document.getElementById('trial-err');
+  var BUILD = '2026-11-27-v2';
   var DEBUG = /[?&]debug=1/.test(location.search);
   var dbgEl = null;
   function logDbg(t){ if(dbgEl){ dbgEl.textContent += t + '\n'; } }
@@ -502,6 +506,8 @@ footer {
     dbgEl = document.createElement('div');
     dbgEl.style.cssText = 'position:fixed;left:0;right:0;bottom:0;z-index:9999;background:#000;color:#0f0;font:12px/1.45 monospace;padding:8px;direction:ltr;text-align:left;max-height:45vh;overflow:auto;white-space:pre-wrap';
     document.body.appendChild(dbgEl);
+    logDbg('build: ' + BUILD + '  page: ' + location.href);
+    logDbg('last-modified: ' + document.lastModified);
     logDbg('UA: ' + ua);
     logDbg('android=' + isAndroid + ' ios=' + isIOS + ' inApp=' + isInApp);
     document.addEventListener('click', function(ev){
@@ -526,14 +532,13 @@ footer {
   function refreshWaLink(){
     var r = window.buildTrialWaLink();
     var next = r.error ? '' : waHref(r.url);
-    if(next){
-      if(sendLink.getAttribute('href') !== next){ sendLink.setAttribute('href', next); }
-    } else {
-      sendLink.removeAttribute('href');
-    }
-    sendLink.style.opacity = next ? '1' : '0.6';
+    if(next && sendLink.getAttribute('href') !== next){ sendLink.setAttribute('href', next); }
+    var ok = !!next;
+    sendLink.style.opacity = ok ? '1' : '0.6';
+    sendLink.style.pointerEvents = ok ? '' : 'none';
+    sendLink.setAttribute('aria-disabled', ok ? 'false' : 'true');
     err.textContent = (touched && r.error) ? r.error : '';
-    logDbg('href now: ' + (next ? next.slice(0,90) : '(none)'));
+    logDbg('href now: ' + String(sendLink.getAttribute('href') || '(none)').slice(0,90));
   }
   function showFallback(){
     var r = window.buildTrialWaLink();
