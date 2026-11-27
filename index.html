@@ -304,7 +304,7 @@ footer {
         <label for="t-note">ملاحظة (اختياري)</label>
         <textarea id="t-note" name="note"></textarea>
         <div class="trial-err" id="trial-err"></div>
-        <button type="submit" class="btn-gold">ابعت الطلب على واتساب</button>
+        <a class="btn-gold" id="trial-send" href="https://wa.me/201002655282" role="button">ابعت الطلب على واتساب</a>
         <p class="trial-note">بعد الضغط هيتفتح واتساب بالرسالة جاهزة، اضغط إرسال ويوصلنا طلبك. مفيش بيانات بتتسجل على الموقع.</p>
       </form>
       <p class="login-line"><a href="https://adelsamir699-maker.github.io" target="_blank" rel="noopener">عندي حساب</a></p>
@@ -425,7 +425,7 @@ footer {
     if(devices){ lines.push('عدد الأجهزة المطلوب تشغيلها: '+devices); }
     if(ref){ lines.push('كود الشريك: '+ref); }
     if(note){ lines.push('ملاحظة: '+note); }
-    return {text: lines.join('\n')};
+    return {url:'https://wa.me/201002655282?text='+encodeURIComponent(lines.join('\n'))};
   };
   document.querySelectorAll('[data-open-trial]').forEach(function(a){
     a.addEventListener('click', function(e){
@@ -434,12 +434,28 @@ footer {
       document.getElementById('trial').scrollIntoView({behavior:'smooth', block:'start'});
     });
   });
-  form.addEventListener('submit', function(e){
-    e.preventDefault();
+  var sendLink = document.getElementById('trial-send');
+  function refreshWaLink(){
     var r = window.buildTrialWaLink();
-    if(r.error){ err.textContent = r.error; return; }
+    sendLink.setAttribute('href', r.error ? 'https://wa.me/201002655282' : r.url);
+  }
+  form.addEventListener('input', function(e){ if(e.target && e.target.style){ e.target.style.borderColor=''; } refreshWaLink(); });
+  form.addEventListener('change', refreshWaLink);
+  refreshWaLink();
+  form.addEventListener('submit', function(e){ e.preventDefault(); });
+  sendLink.addEventListener('click', function(e){
+    var r = window.buildTrialWaLink();
+    if(r.error){
+      e.preventDefault();
+      err.textContent = r.error;
+      ['t-name','t-biz','t-act','t-phone','t-city'].forEach(function(id){
+        var el = document.getElementById(id);
+        if(el && !el.value.trim()){ el.style.borderColor = '#b3261e'; }
+      });
+      return;
+    }
     err.textContent = '';
-    location.href = 'https://wa.me/201002655282?text='+encodeURIComponent(r.text);
+    sendLink.setAttribute('href', r.url);
   });
 })();
 </script>
