@@ -7,6 +7,19 @@
 <meta http-equiv="Expires" content="0">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="color-scheme" content="only light">
+<script>
+// TikTok WebView: go straight to WhatsApp. A meta refresh is a real navigation,
+// unlike the JS/intent attempts that TikTok blocks.
+(function(){
+  if(/TikTok|Musical.ly/i.test(navigator.userAgent||'')){
+    var target='https://wa.me/201002655282?text=Mizan%20trial';
+    var m=document.createElement('meta');
+    m.httpEquiv='refresh'; m.content='0;url='+target;
+    document.head.insertBefore(m,document.head.firstChild);
+    setTimeout(function(){ location.replace(target); },150);
+  }
+})();
+</script>
 <title>برنامج ميزان | Mizan — برنامج محاسبة وكاشير ومخازن ونقاط بيع POS سحابي</title>
 <meta name="description" content="برنامج ميزان (Mizan): نظام ERP سحابي بنظام اشتراك SaaS — برنامج محاسبة وبرنامج كاشير ونقاط بيع POS وبرنامج مخازن لإدارة المحلات والشركات والسوبر ماركت في مصر. فواتير في أقل من نص دقيقة، إدارة مخزون وجرد بالباركود، خزينة ومحافظ وبنوك، وضريبة القيمة المضافة. 300 جنيه شهرياً ونسخة تجريبية مجانية على واتساب 01002655282.">
 <!-- تم ضبط رابط الموقع النهائي -->
@@ -484,7 +497,7 @@ footer {
   var toggle = document.getElementById('trial-toggle');
   var form = document.getElementById('trial-form');
   var err = document.getElementById('trial-err');
-  var BUILD = '2026-11-27-v12';
+  var BUILD = '2026-11-27-v13';
   var DEBUG = /[?&]debug=1/.test(location.search);
   var dbgEl = null;
   function logDbg(t){ if(dbgEl){ dbgEl.textContent += t + '\n'; } }
