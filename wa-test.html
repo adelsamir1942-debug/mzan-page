@@ -22,5 +22,43 @@ a.alt{background:#0d1b3e;color:#fff}
 <a class="btn" href="intent://send?phone=201002655282&text=%D8%AA%D8%AC%D8%B1%D8%A8%D8%A9#Intent;scheme=whatsapp;end">5) رابط intent (أندرويد)</a>
 <a class="btn alt" href="intent://wa.me/201002655282#Intent;scheme=https;package=com.whatsapp;end">6) intent يفتح wa.me في تطبيق واتساب</a>
 <a class="btn" href="intent://adelsamir1942-debug.github.io/mzan-page/#Intent;scheme=https;package=com.android.chrome;end">7) فتح الصفحة في كروم</a>
+
+<hr style="margin:24px 0;border:none;border-top:1px solid #ccc">
+<h1>تشخيص سريع</h1>
+<p class="note">افتح الصفحة دي من تيك توك نفسه، وخد سكرين شوت للجزء ده كله وابعته.</p>
+<div id="diag" style="background:#fff;border:1px solid #d4af37;border-radius:10px;padding:12px;font-size:13px;line-height:1.7;word-break:break-all;direction:ltr;text-align:left">
+<div>UA: <span id="d-ua">...</span></div>
+<div>Android: <b id="d-and">?</b> | iOS: <b id="d-ios">?</b> | InApp: <b id="d-iap">?</b> | wv: <b id="d-wv">?</b></div>
+<div>primary scheme: <b id="d-scheme">?</b></div>
+<div>href: <span id="d-href">...</span></div>
+<div>length: <b id="d-len">?</b></div>
+</div>
+<a class="btn" id="d1" href="#">8) <span dir="ltr">whatsapp://</span> بالرسالة الطويلة</a>
+<a class="btn alt" id="d2" href="#">9) <span dir="ltr">intent://</span> بالرسالة الطويلة</a>
+<a class="btn" id="d3" href="#">10) <span dir="ltr">whatsapp://</span> من غير رسالة خالص</a>
+<script>
+(function(){
+  var ua = navigator.userAgent || '';
+  var isAndroid = /Android/i.test(ua);
+  var isIOS = /iPhone|iPad|iPod/i.test(ua);
+  var isInApp = /; wv\)/.test(ua) ||
+    (isAndroid && /Version\/[\d.]+/.test(ua) && /Chrome\/[\d.]+/.test(ua)) ||
+    /TikTok|musical_ly|BytedanceWebview|trill|Aweme|Instagram|FBAN|FBAV|FB_IAB|Line|Snapchat/i.test(ua);
+  var msg = ['طلب حساب تجريبي مجاني - برنامج ميزان','الاسم: أحمد محمد','اسم الشركة أو المحل: محل النور','نوع النشاط: سوبر ماركت','الموبايل: 01001234567','المدينة: المنصورة','عدد الفروع: 2','عدد الأجهزة المطلوب تشغيلها: 3','موافق على الشروط والأحكام: نعم'].join('\n');
+  var q = encodeURIComponent(msg);
+  var primary = (isAndroid || (isIOS && isInApp)) ? 'whatsapp://send?phone=201002655282&text=' + q : 'https://wa.me/201002655282?text=' + q;
+  document.getElementById('d-ua').textContent = ua;
+  document.getElementById('d-and').textContent = isAndroid ? 'yes' : 'no';
+  document.getElementById('d-ios').textContent = isIOS ? 'yes' : 'no';
+  document.getElementById('d-iap').textContent = isInApp ? 'yes' : 'no';
+  document.getElementById('d-wv').textContent = /; wv\)/.test(ua) ? 'yes' : 'no';
+  document.getElementById('d-scheme').textContent = primary.split('?')[0];
+  document.getElementById('d-href').textContent = primary.length > 150 ? primary.slice(0,100) + ' ... ' + primary.slice(-40) : primary;
+  document.getElementById('d-len').textContent = primary.length;
+  document.getElementById('d1').setAttribute('href', 'whatsapp://send?phone=201002655282&text=' + q);
+  document.getElementById('d2').setAttribute('href', 'intent://send?phone=201002655282&text=' + q + '#Intent;scheme=whatsapp;end');
+  document.getElementById('d3').setAttribute('href', 'whatsapp://send?phone=201002655282');
+})();
+</script>
 </body>
 </html>

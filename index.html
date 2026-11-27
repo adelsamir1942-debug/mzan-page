@@ -267,6 +267,21 @@ footer {
 .trial-form textarea { min-height: 70px; resize: vertical; }
 .trial-err { color: #b3261e; font-size: 14px; min-height: 20px; margin-top: 8px; }
 .trial-note { font-size: 14px; color: var(--ink-2); margin-top: 8px; }
+.trial-form .check-row { display: flex; align-items: flex-start; gap: 8px; margin-top: 14px; font-weight: 600; cursor: pointer; line-height: 1.6; }
+.trial-form .check-row input[type="checkbox"] { width: 18px; height: 18px; min-width: 18px; margin-top: 6px; accent-color: #0f1d3a; cursor: pointer; }
+.check-row a { color: #0d1b3e; text-decoration: underline; }
+.req { color: #b3261e; }
+.terms { display: grid; gap: 12px; }
+.term { background: #fff; border: 1px solid var(--hairline); border-radius: 12px; padding: 14px; font-size: 15px; line-height: 1.8; }
+
+.wa-help { text-align: center; margin: 10px 0 0; font-size: 14px; }
+.wa-help a { color: var(--ink-2); text-decoration: underline; }
+.wa-fb { margin-top: 10px; padding: 12px; border: 1px solid #d4af37; border-radius: 10px; background: #fffdf6; }
+.wa-fb p { margin: 0 0 8px; font-size: 14px; color: var(--ink-2); }
+.wa-fb a { display: block; text-align: center; padding: 12px; border-radius: 10px; font-weight: 700; text-decoration: none; margin: 8px 0 0; font-size: 15px; }
+.wa-fb a.p1 { background: #0d1b3e; color: #fff; }
+.wa-fb a.p2 { background: #d4af37; color: #101f3c; }
+.wa-fb a.p3 { background: #fff; color: #0d1b3e; border: 1px solid #0d1b3e; }
 .login-line { margin-top: 12px; text-align: center; font-size: 13px; }
 .login-line a { color: var(--gold-2); }
 </style>
@@ -304,8 +319,16 @@ footer {
         <label for="t-note">ملاحظة (اختياري)</label>
         <textarea id="t-note" name="note"></textarea>
         <div class="trial-err" id="trial-err"></div>
+        <label class="check-row" for="t-agree"><input type="checkbox" id="t-agree"> <span>أقر بصحة بياناتي وقبول <a href="#terms">الشروط والأحكام</a></span></label>
         <a class="btn-gold" id="trial-send" href="https://wa.me/201002655282" role="button">ابعت الطلب على واتساب</a>
         <p class="trial-note">بعد الضغط هيتفتح واتساب بالرسالة جاهزة، اضغط إرسال ويوصلنا طلبك. مفيش بيانات بتتسجل على الموقع.</p>
+        <p class="wa-help" id="trial-help-row"><a href="#" id="trial-help">الزرار مفتحش واتساب؟</a></p>
+        <div class="wa-fb" id="trial-fb" hidden>
+          <p>جرّب واحد من دول، الرسالة بتتبعت زي ما هي:</p>
+          <a class="p1" id="trial-fb-wa" href="#">افتح واتساب بالرسالة (طريقة تانية)</a>
+          <a class="p2" id="trial-fb-plain" href="#">افتح لينك واتساب العادي</a>
+          <a class="p3" id="trial-fb-chrome" href="#">افتح الصفحة في كروم وأبعت من هناك</a>
+        </div>
       </form>
       <p class="login-line"><a href="https://adelsamir699-maker.github.io" target="_blank" rel="noopener">عندي حساب</a></p>
     </div>
@@ -397,6 +420,16 @@ footer {
     </div>
   </section>
 
+  <section id="terms">
+    <h2>الشروط والأحكام</h2>
+    <div class="terms">
+      <div class="term">البيانات اللي بتكتبها في الفورم بتتبعت على واتساب ميزان (01002655282) عشان نكلمك ونأكد الطلب، ومش بتتسجل على الموقع.</div>
+      <div class="term">النسخة التجريبية مجانية، والاشتراك الشهري 300 جنيه. السعر والمميزات كما هي في 26 نوفمبر 2026 وممكن تتغير، وهنبلغك بأي تغيير قبل التفعيل.</div>
+      <div class="term">إرسال الطلب مش بيلزمك بأي دفع، والتفعيل بيتم بعد ما نكلمك على نفس الرقم.</div>
+      <div class="term">بإرسالك الطلب بتقر إن البيانات اللي كتبتها صحيحة، وإنك مسؤول عن استخدام الحساب بعد التفعيل.</div>
+    </div>
+  </section>
+
   <footer>السعر والمميزات كما هي في 26 نوفمبر 2026.<br><a href="marketers.html" style="color: var(--green-1); font-weight: 700;">شركاء ميزان | تسويق بالعمولة</a></footer>
 
 </div>
@@ -413,6 +446,7 @@ footer {
     if(!name || !biz || !act || !phone || !city){ return {error:'من فضلك املأ الاسم واسم المحل ونوع النشاط ورقم الموبايل والمدينة.'}; }
     if(branches && !/^[0-9]{1,4}$/.test(branches)){ return {error:'عدد الفروع لازم يكون رقم.'}; }
     if(devices && !/^[0-9]{1,4}$/.test(devices)){ return {error:'عدد الأجهزة لازم يكون رقم.'}; }
+    if(!document.getElementById('t-agree').checked){ return {error:'لازم تعلّم على الإقرار بصحة البيانات وقبول الشروط والأحكام قبل الإرسال.'}; }
     var digits = phone.replace(/[^0-9+]/g,'');
     if(!/^\+?[0-9]{10,15}$/.test(digits)){ return {error:'رقم الموبايل مش صحيح. اكتبه بالأرقام، مثال: 01001234567'}; }
     var lines = ['طلب حساب تجريبي مجاني - برنامج ميزان',
@@ -425,6 +459,7 @@ footer {
     if(devices){ lines.push('عدد الأجهزة المطلوب تشغيلها: '+devices); }
     if(ref){ lines.push('كود الشريك: '+ref); }
     if(note){ lines.push('ملاحظة: '+note); }
+    lines.push('موافق على الشروط والأحكام: نعم');
     return {url:'https://wa.me/201002655282?text='+encodeURIComponent(lines.join('\n'))};
   };
   document.querySelectorAll('[data-open-trial]').forEach(function(a){
@@ -435,21 +470,43 @@ footer {
     });
   });
   var sendLink = document.getElementById('trial-send');
+  var helpRow = document.getElementById('trial-help-row');
+  var helpLink = document.getElementById('trial-help');
+  var fbBox = document.getElementById('trial-fb');
+  var fbWa = document.getElementById('trial-fb-wa');
+  var fbPlain = document.getElementById('trial-fb-plain');
+  var fbChrome = document.getElementById('trial-fb-chrome');
+  var CHROME_INTENT = 'intent://adelsamir1942-debug.github.io/mzan-page/#Intent;scheme=https;package=com.android.chrome;end';
   var ua = navigator.userAgent || '';
   var isAndroid = /Android/i.test(ua);
+  var isIOS = /iPhone|iPad|iPod/i.test(ua);
   var isInApp = /; wv\)/.test(ua) ||
     (isAndroid && /Version\/[\d.]+/.test(ua) && /Chrome\/[\d.]+/.test(ua)) ||
-    /TikTok|musical_ly|Instagram|FBAN|FBAV|FB_IAB|Line|Snapchat/i.test(ua);
+    /TikTok|musical_ly|BytedanceWebview|trill|Aweme|Instagram|FBAN|FBAV|FB_IAB|Line|Snapchat/i.test(ua);
+  function waQ(url){ var k = url.indexOf('?text='); return k < 0 ? '' : url.slice(k + 6); }
   function waHref(url){
-    if(!isInApp){ return url; }
-    var q = url.slice(url.indexOf('?text=')).replace('?text=', '');
-    if(isAndroid){ return 'intent://send?phone=201002655282&text=' + q + '#Intent;scheme=whatsapp;end'; }
-    return 'whatsapp://send?phone=201002655282&text=' + q;
+    if(!isAndroid && !(isIOS && isInApp)){ return url; }
+    return 'whatsapp://send?phone=201002655282&text=' + waQ(url);
+  }
+  function waIntentHref(url){
+    return 'intent://send?phone=201002655282&text=' + waQ(url) + '#Intent;scheme=whatsapp;end';
   }
   function refreshWaLink(){
     var r = window.buildTrialWaLink();
     sendLink.setAttribute('href', r.error ? 'https://wa.me/201002655282' : waHref(r.url));
+    sendLink.style.opacity = r.error ? '0.65' : '1';
   }
+  function showFallback(){
+    var r = window.buildTrialWaLink();
+    if(r.error){ return; }
+    fbWa.setAttribute('href', isAndroid ? waIntentHref(r.url) : 'whatsapp://send?phone=201002655282&text=' + waQ(r.url));
+    if(!isAndroid){ fbChrome.hidden = true; }
+    fbPlain.setAttribute('href', r.url);
+    fbBox.hidden = false;
+  }
+  if(!isAndroid){ helpRow.hidden = true; }
+  fbChrome.setAttribute('href', CHROME_INTENT);
+  helpLink.addEventListener('click', function(e){ e.preventDefault(); showFallback(); });
   form.addEventListener('input', function(e){ if(e.target && e.target.style){ e.target.style.borderColor=''; } refreshWaLink(); });
   form.addEventListener('change', refreshWaLink);
   refreshWaLink();
@@ -463,10 +520,13 @@ footer {
         var el = document.getElementById(id);
         if(el && !el.value.trim()){ el.style.borderColor = '#b3261e'; }
       });
+      var ag = document.getElementById('t-agree');
+      if(ag && !ag.checked){ ag.scrollIntoView({behavior:'smooth', block:'center'}); }
       return;
     }
     err.textContent = '';
     sendLink.setAttribute('href', waHref(r.url));
+    if(isAndroid || isIOS){ setTimeout(function(){ if(document.visibilityState === 'visible'){ showFallback(); } }, 1800); }
   });
 })();
 </script>
