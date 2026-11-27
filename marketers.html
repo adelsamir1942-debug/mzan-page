@@ -257,7 +257,7 @@ footer {
         </div>
         <label class="check-row" for="m-terms"><input type="checkbox" id="m-terms"> <span>أقر بصحة بياناتي وأوافق على <a href="#terms">شروط برنامج شركاء ميزان</a> المكتوبة في الصفحة دي <span class="req">*</span></span></label>
         <div class="reg-err" id="reg-err"></div>
-        <a class="btn-gold" id="reg-send" href="https://wa.me/201002655282" role="button">ابعت التسجيل على واتساب</a>
+        <a class="btn-gold" id="reg-send" href="https://wa.me/201002655282">ابعت التسجيل على واتساب</a>
         <p class="reg-note">بعد الضغط هيتفتح واتساب بالرسالة جاهزة، اضغط إرسال ويوصلنا طلبك ونرد عليك بالكود الخاص بيك. مفيش بيانات بتتسجل على الموقع.</p>
         <p class="wa-help" id="reg-help-row"><a href="#" id="reg-help">الزرار مفتحش واتساب؟</a></p>
         <div class="wa-fb" id="reg-fb" hidden>
@@ -330,6 +330,9 @@ footer {
   var toggle = document.getElementById('reg-toggle');
   var form = document.getElementById('reg-form');
   var err = document.getElementById('reg-err');
+  var DEBUG = /[?&]debug=1/.test(location.search);
+  var dbgEl = null;
+  function logDbg(t){ if(dbgEl){ dbgEl.textContent += t + '\n'; } }
   toggle.addEventListener('click', function(){ form.classList.toggle('open'); });
   function v(id){ return document.getElementById(id).value.trim(); }
   function buildRegWaLink(){
@@ -361,6 +364,18 @@ footer {
   var isInApp = /; wv\)/.test(ua) ||
     (isAndroid && /Version\/[\d.]+/.test(ua) && /Chrome\/[\d.]+/.test(ua)) ||
     /TikTok|musical_ly|BytedanceWebview|trill|Aweme|Instagram|FBAN|FBAV|FB_IAB|Line|Snapchat/i.test(ua);
+  if(DEBUG){
+    dbgEl = document.createElement('div');
+    dbgEl.style.cssText = 'position:fixed;left:0;right:0;bottom:0;z-index:9999;background:#000;color:#0f0;font:12px/1.45 monospace;padding:8px;direction:ltr;text-align:left;max-height:45vh;overflow:auto;white-space:pre-wrap';
+    document.body.appendChild(dbgEl);
+    logDbg('UA: ' + ua);
+    logDbg('android=' + isAndroid + ' ios=' + isIOS + ' inApp=' + isInApp);
+    document.addEventListener('click', function(ev){
+      var t = ev.target;
+      var a = (t && t.closest) ? t.closest('a') : null;
+      logDbg('tap <' + (t && t.tagName) + '> id=' + (t && t.id) + ' anchor=' + (a ? (a.id || '(no id)') : 'none') + ' href=' + (a ? String(a.getAttribute('href')).slice(0,90) : '-'));
+    }, true);
+  }
   function waQ(url){ var k = url.indexOf('?text='); return k < 0 ? '' : url.slice(k + 6); }
   function waHref(url){
     if(!isAndroid && !(isIOS && isInApp)){ return url; }
@@ -373,10 +388,18 @@ footer {
   function waSchemeHref(url){
     return 'whatsapp://send?phone=201002655282&text=' + waQ(url);
   }
+  var touched = false;
   function refreshWaLink(){
     var r = buildRegWaLink();
-    sendLink.setAttribute('href', r.error ? 'https://wa.me/201002655282' : waHref(r.url));
-    sendLink.style.opacity = r.error ? '0.65' : '1';
+    var next = r.error ? '' : waHref(r.url);
+    if(next){
+      if(sendLink.getAttribute('href') !== next){ sendLink.setAttribute('href', next); }
+    } else {
+      sendLink.removeAttribute('href');
+    }
+    sendLink.style.opacity = next ? '1' : '0.6';
+    err.textContent = (touched && r.error) ? r.error : '';
+    logDbg('href now: ' + (next ? next.slice(0,90) : '(none)'));
   }
   function showFallback(){
     var r = buildRegWaLink();
@@ -390,27 +413,10 @@ footer {
   if(!isAndroid){ helpRow.hidden = true; }
   fbChrome.setAttribute('href', CHROME_INTENT);
   helpLink.addEventListener('click', function(e){ e.preventDefault(); showFallback(); });
-  form.addEventListener('input', function(e){ if(e.target && e.target.style){ e.target.style.borderColor=''; } refreshWaLink(); });
-  form.addEventListener('change', refreshWaLink);
+  form.addEventListener('input', function(e){ touched = true; if(e.target && e.target.style){ e.target.style.borderColor=''; } refreshWaLink(); });
+  form.addEventListener('change', function(){ touched = true; refreshWaLink(); });
   refreshWaLink();
   form.addEventListener('submit', function(e){ e.preventDefault(); });
-  sendLink.addEventListener('click', function(e){
-    var r = buildRegWaLink();
-    if(r.error){
-      e.preventDefault();
-      err.textContent = r.error;
-      ['m-name','m-age','m-phone','m-city','m-social'].forEach(function(id){
-        var el = document.getElementById(id);
-        if(el && !el.value.trim()){ el.style.borderColor = '#b3261e'; }
-      });
-      var ag = document.getElementById('m-terms');
-      if(ag && !ag.checked){ ag.scrollIntoView({behavior:'smooth', block:'center'}); }
-      return;
-    }
-    err.textContent = '';
-    sendLink.setAttribute('href', waHref(r.url));
-    if(isAndroid || isIOS){ setTimeout(function(){ if(document.visibilityState === 'visible'){ showFallback(); } }, 1800); }
-  });
 })();
 </script>
 </body>
