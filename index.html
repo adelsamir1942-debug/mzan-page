@@ -7,19 +7,6 @@
 <meta http-equiv="Expires" content="0">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="color-scheme" content="only light">
-<script>
-// TikTok WebView: go straight to WhatsApp. A meta refresh is a real navigation,
-// unlike the JS/intent attempts that TikTok blocks.
-(function(){
-  if(/TikTok|Musical.ly/i.test(navigator.userAgent||'')){
-    var target='https://wa.me/201002655282?text=Mizan%20trial';
-    var m=document.createElement('meta');
-    m.httpEquiv='refresh'; m.content='0;url='+target;
-    document.head.insertBefore(m,document.head.firstChild);
-    setTimeout(function(){ location.replace(target); },150);
-  }
-})();
-</script>
 <title>برنامج ميزان | Mizan — برنامج محاسبة وكاشير ومخازن ونقاط بيع POS سحابي</title>
 <meta name="description" content="برنامج ميزان (Mizan): نظام ERP سحابي بنظام اشتراك SaaS — برنامج محاسبة وبرنامج كاشير ونقاط بيع POS وبرنامج مخازن لإدارة المحلات والشركات والسوبر ماركت في مصر. فواتير في أقل من نص دقيقة، إدارة مخزون وجرد بالباركود، خزينة ومحافظ وبنوك، وضريبة القيمة المضافة. 300 جنيه شهرياً ونسخة تجريبية مجانية على واتساب 01002655282.">
 <!-- تم ضبط رابط الموقع النهائي -->
@@ -380,10 +367,11 @@ footer {
         <p class="trial-note">بعد الضغط هيتفتح واتساب بالرسالة جاهزة، اضغط إرسال ويوصلنا طلبك. مفيش بيانات بتتسجل على الموقع.</p>
         <p class="wa-help" id="trial-help-row"><a href="#" id="trial-help">الزرار مفتحش واتساب؟</a></p>
         <div class="wa-fb" id="trial-fb" hidden>
-          <p>جرّب واحد من دول، الرسالة بتتبعت زي ما هي:</p>
-          <a class="p1" id="trial-fb-wa" href="https://wa.me/201002655282">افتح واتساب بالرسالة</a>
-          <a class="p2" id="trial-fb-wabiz" href="https://api.whatsapp.com/send?phone=201002655282">لينك واتساب بديل</a>
-          <a class="p2" id="trial-fb-plain" href="#">فتح تطبيق واتساب مباشرة</a>
+          <p>الطلب جاهز. اضغط الزرار الأخضر لفتح واتساب بالرسالة:</p>
+          <a class="p1" id="trial-fb-wa" href="#">افتح واتساب بالرسالة</a>
+          <a class="p2" id="trial-fb-wabiz" href="#" hidden>لو ما فتحش (أندرويد): طريقة تانية</a>
+          <a class="p2" id="trial-fb-plain" href="#" hidden>لو ما فتحش (أندرويد): طريقة تالتة</a>
+          <a class="p3" id="trial-fb-call" href="tel:+201002655282">اتصل بنا</a>
           <a class="p3" id="trial-fb-chrome" href="#">افتح الصفحة في المتصفح وأكمل الطلب</a>
           <a class="p3" id="trial-fb-copy" href="#">انسخ الرسالة</a>
         </div>
@@ -497,7 +485,7 @@ footer {
   var toggle = document.getElementById('trial-toggle');
   var form = document.getElementById('trial-form');
   var err = document.getElementById('trial-err');
-  var BUILD = '2026-11-27-v13';
+  var BUILD = '2026-11-27-v14';
   var DEBUG = /[?&]debug=1/.test(location.search);
   var dbgEl = null;
   function logDbg(t){ if(dbgEl){ dbgEl.textContent += t + '\n'; } }
@@ -617,11 +605,15 @@ footer {
   }
   function showFallback(){
     var r = window.buildTrialWaLink();
-    var url = r.error ? 'https://wa.me/201002655282?text=Mizan%20trial' : r.url;
-    var q = r.error ? 'Mizan%20trial' : waQ(r.url);
-    fbWa.setAttribute('href', url);
-    fbWabiz.setAttribute('href', 'https://api.whatsapp.com/send?phone=201002655282&text=' + q);
-    fbPlain.setAttribute('href', 'whatsapp://send?phone=201002655282&text=' + q);
+    if(r.error){ return; }
+    var q = waQ(r.url);
+    // Static links, fully built before any tap. No wa.me / api.whatsapp.com here:
+    // TikTok refuses those.
+    fbWa.setAttribute('href', 'whatsapp://send?phone=201002655282&text=' + q);
+    fbWabiz.setAttribute('href', 'intent://send?phone=201002655282&text=' + q + '#Intent;scheme=whatsapp;end');
+    fbPlain.setAttribute('href', 'intent://wa.me/201002655282?text=' + q + '#Intent;scheme=https;package=com.whatsapp;end');
+    fbWabiz.hidden = !isAndroid;
+    fbPlain.hidden = !isAndroid;
     fbChrome.setAttribute('href', stateUrl());
     fbBox.hidden = false;
     helpRow.hidden = false;
@@ -634,7 +626,7 @@ footer {
     var r = window.buildTrialWaLink();
     if(r.error){ e.preventDefault(); touched = true; err.textContent = r.error; return; }
     if(DEBUG){ logDbg('native click -> ' + sendLink.getAttribute('href')); }
-    if(isAndroid || isIOS){
+    if((isAndroid || isIOS) && !isInApp){
       setTimeout(function(){
         if(document.visibilityState !== 'visible'){ return; }
         location.href = r.url;
