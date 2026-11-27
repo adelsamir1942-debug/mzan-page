@@ -581,10 +581,7 @@ footer {
     helpRow.hidden = false;
   }
 
-  // wa.me is a universal (https) link: it works in normal browsers and is the
-  // only scheme in-app browsers such as TikTok may still allow. No intent://
-  // or whatsapp:// on the main button — those are silently blocked in WebViews.
-  // Fix v7: NO preventDefault on the valid state. A native <a href> click is the
+  // Fix v7: no preventDefault on the valid state. A native <a href> click is the
   // only user gesture in-app browsers (TikTok) reliably let through. The old
   // window.open(..., '_system') + location.href combo opened a blank popup and
   // was silently blocked inside TikTok WebView.
@@ -648,4 +645,3 @@ footer {
 </script>
 </body>
 </html>
-
