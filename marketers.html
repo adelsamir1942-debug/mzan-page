@@ -336,7 +336,7 @@ footer {
     lines.push('طريقة استلام العمولة: '+(payout.value === 'vodafone' ? 'فودافون كاش' : 'إنستا باي'));
     lines.push('موافق على الشروط: نعم');
     err.textContent = '';
-    window.open('https://wa.me/201002655282?text='+encodeURIComponent(lines.join('\n')), '_blank', 'noopener');
+    location.href = 'https://wa.me/201002655282?text='+encodeURIComponent(lines.join('\n'));
   });
 })();
 </script>

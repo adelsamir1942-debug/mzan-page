@@ -439,7 +439,7 @@ footer {
     var r = window.buildTrialWaLink();
     if(r.error){ err.textContent = r.error; return; }
     err.textContent = '';
-    window.open('https://wa.me/201002655282?text='+encodeURIComponent(r.text), '_blank', 'noopener');
+    location.href = 'https://wa.me/201002655282?text='+encodeURIComponent(r.text);
   });
 })();
 </script>
