@@ -304,6 +304,7 @@ footer {
 .gate-sub{display:block;width:100%;background:#fff;color:#0b2d3f;border:1px solid #0b2d3f;font-weight:700;font-size:15px;padding:13px;border-radius:12px;cursor:pointer;font-family:inherit;margin:0 0 12px}
 .gate-steps{font-size:13px!important;color:#6b7782!important;margin:14px 0 0!important}
 .gate-later{background:transparent;border:0;color:#8895a0;font-size:13px;cursor:pointer;text-decoration:underline;font-family:inherit;margin-top:8px}
+.gate-alt{display:block;color:#0b2d3f;font-size:13px;text-decoration:underline;margin:0 0 12px}
 </style>
 </head>
 <body>
@@ -318,8 +319,9 @@ footer {
     <h2>افتح الرابط في المتصفح</h2>
     <p>عشان زرار واتساب يشتغل ويفتح المحادثة مباشرة، افتح الصفحة في المتصفح أولاً. بياناتك هتكون جاهزة.</p>
     <a id="gate-open" class="gate-main" href="#">افتح في المتصفح</a>
+    <a id="gate-chrome" class="gate-alt" href="#">افتح بجوجل كروم تحديداً</a>
     <button type="button" id="gate-copy" class="gate-sub">انسخ الرابط وافتحه بنفسك</button>
-    <p class="gate-steps">أو جوه تيك توك: اضغط ⋮ أعلى الشاشة ← «فتح في المتصفح»</p>
+    <p class="gate-steps">لو ظهرت رسالة «تعذر إكمال الإجراء»، جرّب كروم أو انسخ الرابط. أو جوه تيك توك: اضغط ⋮ أعلى الشاشة ← «فتح في المتصفح»</p>
     <button type="button" id="gate-later" class="gate-later">متابعة جوه تيك توك</button>
   </div>
 </div>
@@ -478,7 +480,7 @@ footer {
   var toggle = document.getElementById('trial-toggle');
   var form = document.getElementById('trial-form');
   var err = document.getElementById('trial-err');
-  var BUILD = '2026-11-27-v10';
+  var BUILD = '2026-11-27-v11';
   var DEBUG = /[?&]debug=1/.test(location.search);
   var dbgEl = null;
   function logDbg(t){ if(dbgEl){ dbgEl.textContent += t + '\n'; } }
@@ -679,16 +681,21 @@ footer {
   var gate = document.getElementById('browser-gate');
   if(isInApp && gate){
     var gateOpen = document.getElementById('gate-open');
+    var gateChrome = document.getElementById('gate-chrome');
     var gateCopy = document.getElementById('gate-copy');
     var gateLater = document.getElementById('gate-later');
     var cleanUrl = location.origin + location.pathname;
+    var fallback = encodeURIComponent(stateUrl());
+    var intentBase = 'intent://' + location.host + location.pathname + '#Intent;scheme=https;';
     if(isAndroid){
-      gateOpen.setAttribute('href',
-        'intent://' + location.host + location.pathname +
-        '#Intent;scheme=https;package=com.android.chrome;S.browser_fallback_url=' +
-        encodeURIComponent(stateUrl()) + ';end');
+      // No package = let Android resolve the installed default browser.
+      // A hard-coded com.android.chrome fails with "cannot complete action"
+      // on phones that use Samsung Internet / Opera / another browser.
+      gateOpen.setAttribute('href', intentBase + 'S.browser_fallback_url=' + fallback + ';end');
+      gateChrome.setAttribute('href', intentBase + 'package=com.android.chrome;S.browser_fallback_url=' + fallback + ';end');
     } else {
       gateOpen.setAttribute('href', stateUrl());
+      gateChrome.hidden = true;
     }
     gateCopy.addEventListener('click', function(e){
       e.preventDefault();
