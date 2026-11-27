@@ -442,9 +442,10 @@ footer {
   function openWhatsApp(text, fbId){
     var enc = encodeURIComponent(text);
     var ua = navigator.userAgent || '';
-    var isMobile = /Android|iPhone|iPad|iPod/i.test(ua);
+    var isAndroid = /Android/i.test(ua);
+    var isIOS = /iPhone|iPad|iPod/i.test(ua);
     var isInApp = /TikTok|Instagram|FBAN|FBAV|Line|Snapchat/i.test(ua);
-    var webUrl = (isMobile ? 'https://api.whatsapp.com/send?phone=201002655282&text=' : 'https://web.whatsapp.com/send?phone=201002655282&text=') + enc;
+    var webUrl = ((isAndroid || isIOS) ? 'https://api.whatsapp.com/send?phone=201002655282&text=' : 'https://web.whatsapp.com/send?phone=201002655282&text=') + enc;
     var fb = document.getElementById(fbId);
     var copyBtn = fb.querySelector('button');
     fb.style.display = 'block';
@@ -460,15 +461,29 @@ footer {
     };
     if(isInApp){
       document.getElementById(fbId+'-hint').style.display = 'block';
-      setTimeout(function(){
-        if(!document.hidden){ window.location.href = webUrl; }
-      }, 1500);
       return;
     }
-    window.location.href = 'whatsapp://send?phone=201002655282&text=' + enc;
-    setTimeout(function(){
-      if(!document.hidden){ window.location.href = webUrl; }
-    }, 1500);
+    var switched = false;
+    var onHide = function(){ switched = true; };
+    document.addEventListener('visibilitychange', function h(){
+      if(document.hidden){ switched = true; document.removeEventListener('visibilitychange', h); }
+    });
+    window.addEventListener('blur', onHide);
+    if(isAndroid){
+      window.location.href = 'intent://send?phone=201002655282&text=' + enc + '#Intent;scheme=whatsapp;end';
+      setTimeout(function(){
+        window.removeEventListener('blur', onHide);
+        if(!switched && !document.hidden){ window.location.href = webUrl; }
+      }, 3000);
+    } else if(isIOS){
+      window.location.href = 'https://wa.me/201002655282?text=' + enc;
+    } else {
+      window.location.href = 'whatsapp://send?phone=201002655282&text=' + enc;
+      setTimeout(function(){
+        window.removeEventListener('blur', onHide);
+        if(!switched && !document.hidden){ window.location.href = webUrl; }
+      }, 3000);
+    }
   }
   form.addEventListener('submit', function(e){
     e.preventDefault();
