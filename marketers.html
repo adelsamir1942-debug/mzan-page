@@ -335,18 +335,38 @@ footer {
   function logDbg(t){ if(dbgEl){ dbgEl.textContent += t + '\n'; } }
   toggle.addEventListener('click', function(){ form.classList.toggle('open'); });
   function v(id){ return document.getElementById(id).value.trim(); }
+  function toAsciiDigits(x){
+    return String(x)
+      .replace(/[\u0660-\u0669]/g, function(c){ return String.fromCharCode(c.charCodeAt(0) - 1632 + 48); })
+      .replace(/[\u06F0-\u06F9]/g, function(c){ return String.fromCharCode(c.charCodeAt(0) - 1776 + 48); });
+  }
+  function normDigits(x){ return toAsciiDigits(x).replace(/[^0-9]/g, ''); }
+  function normPhone(x){
+    var s = toAsciiDigits(x).replace(/[^0-9+]/g, '');
+    if(s.indexOf('00') === 0){ s = s.slice(2); }
+    if(s.charAt(0) === '+'){ s = s.slice(1); }
+    if(s.indexOf('20') === 0 && s.length >= 12){ s = '0' + s.slice(2); }
+    return s;
+  }
+  function phoneOk(s){
+    if(/^01[0125][0-9]{8}$/.test(s)){ return true; }
+    if(s.charAt(0) === '0'){ return false; }
+    return /^[0-9]{10,15}$/.test(s);
+  }
   function buildRegWaLink(){
     var name=v('m-name'), age=v('m-age'), phone=v('m-phone'), city=v('m-city'), social=v('m-social'), followers=v('m-followers'), exp=v('m-exp');
     if(!name || !age || !phone || !city || !social){ return {error:'من فضلك املأ الاسم والعمر ورقم الواتساب والمحافظة وحساب تيك توك أو فيسبوك.'}; }
-    if(!/^[0-9]{1,3}$/.test(age) || parseInt(age,10) < 10 || parseInt(age,10) > 100){ return {error:'العمر مش صحيح. اكتبه بالأرقام.'}; }
-    var digits = phone.replace(/[^0-9+]/g,'');
-    if(!/^\+?[0-9]{10,15}$/.test(digits)){ return {error:'رقم الواتساب مش صحيح. اكتبه بالأرقام، مثال: 01001234567'}; }
-    if(followers && !/^[0-9]+$/.test(followers)){ return {error:'عدد المتابعين لازم يكون رقم.'}; }
+    var ageN = normDigits(age);
+    if(!/^[0-9]{1,3}$/.test(ageN) || parseInt(ageN,10) < 10 || parseInt(ageN,10) > 100){ return {error:'العمر مش صحيح. اكتبه بالأرقام من 10 لـ 100.'}; }
+    var digits = normPhone(phone);
+    if(!phoneOk(digits)){ return {error:'رقم الواتساب مش مقروء. اكتبه 11 رقم زي 01001234567، والمسافات ومفتاح الدولة مقبولين، والأرقام العربية كمان.'}; }
+    var followersN = normDigits(followers);
+    if(followers && !followersN){ return {error:'عدد المتابعين لازم يكون رقم.'}; }
     var payout = form.querySelector('input[name="payout"]:checked');
     if(!payout){ return {error:'اختار طريقة استلام العمولة.'}; }
     if(!document.getElementById('m-terms').checked){ return {error:'لازم تعلّم على الإقرار بصحة البيانات وقبول الشروط عشان التسجيل يتبعت.'}; }
     var clean = function(x){ return String(x).replace(/[\r\n]+/g,' ').replace(/-/g,' ').trim(); };
-    var parts = ['Mizan partner', clean(name), clean(age), clean(phone), clean(city), clean(social), (payout.value === 'vodafone' ? 'Vodafone' : 'InstaPay')];
+    var parts = ['Mizan partner', clean(name), ageN, digits, clean(city), clean(social), (payout.value === 'vodafone' ? 'Vodafone' : 'InstaPay')];
     return {url:'https://wa.me/201002655282?text='+encodeURIComponent(parts.join('-'))};
   }
   var sendLink = document.getElementById('reg-send');

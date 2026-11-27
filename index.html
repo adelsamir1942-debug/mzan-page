@@ -445,16 +445,34 @@ footer {
   function logDbg(t){ if(dbgEl){ dbgEl.textContent += t + '\n'; } }
   toggle.addEventListener('click', function(){ form.classList.toggle('open'); });
   function v(id){ return document.getElementById(id).value.trim(); }
+  function toAsciiDigits(x){
+    return String(x)
+      .replace(/[\u0660-\u0669]/g, function(c){ return String.fromCharCode(c.charCodeAt(0) - 1632 + 48); })
+      .replace(/[\u06F0-\u06F9]/g, function(c){ return String.fromCharCode(c.charCodeAt(0) - 1776 + 48); });
+  }
+  function normDigits(x){ return toAsciiDigits(x).replace(/[^0-9]/g, ''); }
+  function normPhone(x){
+    var s = toAsciiDigits(x).replace(/[^0-9+]/g, '');
+    if(s.indexOf('00') === 0){ s = s.slice(2); }
+    if(s.charAt(0) === '+'){ s = s.slice(1); }
+    if(s.indexOf('20') === 0 && s.length >= 12){ s = '0' + s.slice(2); }
+    return s;
+  }
+  function phoneOk(s){
+    if(/^01[0125][0-9]{8}$/.test(s)){ return true; }
+    if(s.charAt(0) === '0'){ return false; }
+    return /^[0-9]{10,15}$/.test(s);
+  }
   window.buildTrialWaLink = function(){
     var name=v('t-name'), biz=v('t-biz'), act=v('t-act'), phone=v('t-phone'), city=v('t-city'), branches=v('t-branches'), devices=v('t-devices'), ref=v('t-ref'), note=v('t-note');
     if(!name || !biz || !act || !phone || !city){ return {error:'من فضلك املأ الاسم واسم المحل ونوع النشاط ورقم الموبايل والمدينة.'}; }
-    if(branches && !/^[0-9]{1,4}$/.test(branches)){ return {error:'عدد الفروع لازم يكون رقم.'}; }
-    if(devices && !/^[0-9]{1,4}$/.test(devices)){ return {error:'عدد الأجهزة لازم يكون رقم.'}; }
+    if(branches && !/^[0-9]{1,4}$/.test(normDigits(branches))){ return {error:'عدد الفروع لازم يكون رقم من 1 لـ 9999.'}; }
+    if(devices && !/^[0-9]{1,4}$/.test(normDigits(devices))){ return {error:'عدد الأجهزة لازم يكون رقم من 1 لـ 9999.'}; }
     if(!document.getElementById('t-agree').checked){ return {error:'لازم تعلّم على الإقرار بصحة البيانات وقبول الشروط والأحكام قبل الإرسال.'}; }
-    var digits = phone.replace(/[^0-9+]/g,'');
-    if(!/^\+?[0-9]{10,15}$/.test(digits)){ return {error:'رقم الموبايل مش صحيح. اكتبه بالأرقام، مثال: 01001234567'}; }
+    var digits = normPhone(phone);
+    if(!phoneOk(digits)){ return {error:'رقم الموبايل مش مقروء. اكتبه 11 رقم زي 01001234567، والمسافات ومفتاح الدولة مقبولين، والأرقام العربية كمان.'}; }
     var clean = function(x){ return String(x).replace(/[\r\n]+/g,' ').replace(/-/g,' ').trim(); };
-    var parts = ['Mizan trial', clean(name), clean(biz), clean(act), clean(phone), clean(city)];
+    var parts = ['Mizan trial', clean(name), clean(biz), clean(act), digits, clean(city)];
     if(ref){ parts.push(clean(ref)); }
     return {url:'https://wa.me/201002655282?text='+encodeURIComponent(parts.join('-'))};
   };
