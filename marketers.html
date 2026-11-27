@@ -228,14 +228,15 @@ footer {
 #open-browser-hint{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;padding:10px 12px;background:#0b2d3f;color:#fff;font-size:13px;text-align:center}
 #open-browser-hint[hidden]{display:none}
 #open-browser-hint a{display:inline-block;background:#d4af37;color:#0b2d3f;font-weight:700;padding:9px 16px;border-radius:8px;text-decoration:none;font-size:14px;white-space:nowrap}
-#open-browser-hint a.ob-alt{background:#fff;color:#0b2d3f}
+#open-browser-hint .ob-text{flex:1 1 100%;font-size:13px;line-height:1.7}
+#open-browser-hint #open-browser-copy{background:#d4af37;color:#0b2d3f;font-weight:700;font-size:13px;padding:8px 14px;border-radius:8px;cursor:pointer}
 #open-browser-hint button{background:transparent;border:0;color:#fff;font-size:22px;line-height:1;padding:2px 6px;cursor:pointer;font-family:inherit}
 </style>
 </head>
 <body>
 <div id="open-browser-hint" hidden>
-  <a id="open-browser-link" href="intent://adelsamir1942-debug.github.io/mzan-page/marketers.html#Intent;scheme=https;package=com.android.chrome;end">افتح في المتصفح</a>
-  <a id="open-browser-any" class="ob-alt" href="intent://adelsamir1942-debug.github.io/mzan-page/marketers.html#Intent;scheme=https;S.browser_fallback_url=https%3A%2F%2Fadelsamir1942-debug.github.io%2Fmzan-page%2Fmarketers.html;end">متصفح آخر</a>
+  <div class="ob-text">لو الزرار ما فتحش واتساب، انسخ الرابط وافتحه في المتصفح</div>
+  <button type="button" id="open-browser-copy">نسخ الرابط</button>
   <button type="button" id="open-browser-close" aria-label="إغلاق">×</button>
 </div>
 
@@ -272,15 +273,16 @@ footer {
         </div>
         <label class="check-row" for="m-terms"><input type="checkbox" id="m-terms"> <span>أقر بصحة بياناتي وأوافق على <a href="#terms">شروط برنامج شركاء ميزان</a> المكتوبة في الصفحة دي <span class="req">*</span></span></label>
         <div class="reg-err" id="reg-err"></div>
-        <a class="btn-gold" id="reg-send" href="intent://wa.me/201002655282?text=Mizan%20partner#Intent;scheme=https;package=com.whatsapp;end">ابعت التسجيل على واتساب</a>
+        <a class="btn-gold" id="reg-send" href="#">ابعت التسجيل على واتساب</a>
         <p class="reg-note">بعد الضغط هيتفتح واتساب بالرسالة جاهزة، اضغط إرسال ويوصلنا طلبك ونرد عليك بالكود الخاص بيك. مفيش بيانات بتتسجل على الموقع.</p>
         <p class="wa-help" id="reg-help-row"><a href="#" id="reg-help">الزرار مفتحش واتساب؟</a></p>
         <div class="wa-fb" id="reg-fb" hidden>
-          <p>جرّب واحد من دول، الرسالة بتتبعت زي ما هي:</p>
-          <a class="p1" id="reg-fb-wa" href="#">افتح واتساب بالرسالة (طريقة تانية)</a>
-          <a class="p2" id="reg-fb-wabiz" href="#">لو عندك واتساب بزنس</a>
-          <a class="p2" id="reg-fb-plain" href="#">افتح لينك واتساب العادي</a>
-          <a class="p3" id="reg-fb-chrome" href="#">افتح الصفحة في كروم وأبعت من هناك</a>
+          <p>الطلب جاهز. اضغط الزرار الأخضر لفتح واتساب بالرسالة:</p>
+          <a class="p1" id="reg-fb-wa" href="#">افتح واتساب بالرسالة</a>
+          <a class="p2" id="reg-fb-wabiz" href="#" hidden>لو ما فتحش (أندرويد): طريقة تانية</a>
+          <a class="p2" id="reg-fb-plain" href="#" hidden>لو ما فتحش (أندرويد): طريقة تالتة</a>
+          <a class="p3" id="reg-fb-call" href="tel:+201002655282">اتصل بنا</a>
+          <a class="p3" id="reg-fb-copy" href="#">انسخ الرسالة</a>
         </div>
       </form>
     </div>
@@ -345,7 +347,7 @@ footer {
   var toggle = document.getElementById('reg-toggle');
   var form = document.getElementById('reg-form');
   var err = document.getElementById('reg-err');
-  var BUILD = '2026-11-27-v5';
+  var BUILD = '2026-11-27-m6';
   var DEBUG = /[?&]debug=1/.test(location.search);
   var dbgEl = null;
   function logDbg(t){ if(dbgEl){ dbgEl.textContent += t + '\n'; } }
@@ -383,7 +385,7 @@ footer {
     if(!document.getElementById('m-terms').checked){ return {error:'لازم تعلّم على الإقرار بصحة البيانات وقبول الشروط عشان التسجيل يتبعت.'}; }
     var clean = function(x){ return String(x).replace(/[\r\n]+/g,' ').replace(/-/g,' ').trim(); };
     var parts = ['Mizan partner', clean(name), ageN, digits, clean(city), clean(social), (payout.value === 'vodafone' ? 'Vodafone' : 'InstaPay')];
-    return {url:'https://wa.me/201002655282?text='+encodeURIComponent(parts.join('-'))};
+    return {url:'https://wa.me/201002655282?text='+encodeURIComponent(parts.join('-')), text:parts.join('-')};
   }
   var sendLink = document.getElementById('reg-send');
   var helpRow = document.getElementById('reg-help-row');
@@ -392,8 +394,7 @@ footer {
   var fbWa = document.getElementById('reg-fb-wa');
   var fbWabiz = document.getElementById('reg-fb-wabiz');
   var fbPlain = document.getElementById('reg-fb-plain');
-  var fbChrome = document.getElementById('reg-fb-chrome');
-  var CHROME_INTENT = 'intent://adelsamir1942-debug.github.io/mzan-page/marketers.html#Intent;scheme=https;package=com.android.chrome;end';
+  var fbCopy = document.getElementById('reg-fb-copy');
   var ua = navigator.userAgent || '';
   var isAndroid = /Android/i.test(ua);
   var isIOS = /iPhone|iPad|iPod/i.test(ua);
@@ -416,9 +417,8 @@ footer {
   }
   function waQ(url){ var k = url.indexOf('?text='); return k < 0 ? '' : url.slice(k + 6); }
   function waHref(url){
-    if(!isAndroid && !(isIOS && isInApp)){ return url; }
-    if(isAndroid){ return waMeIntent(url, 'com.whatsapp'); }
-    return waSchemeHref(url);
+    if(isAndroid || isIOS){ return waSchemeHref(url); }
+    return url;
   }
   function waMeIntent(url, pkg){
     return 'intent://wa.me/201002655282?text=' + waQ(url) + '#Intent;scheme=https;package=' + pkg + ';end';
@@ -437,65 +437,64 @@ footer {
     sendLink.setAttribute('aria-disabled', ok ? 'false' : 'true');
     err.textContent = (touched && r.error) ? r.error : '';
     logDbg('href now: ' + String(sendLink.getAttribute('href') || '(none)').slice(0,90));
+    if(isInApp && ok){ showFallback(); }
   }
   function showFallback(){
     var r = buildRegWaLink();
     if(r.error){ return; }
+    // Static links, fully built before any tap. No wa.me / api.whatsapp.com here.
     fbWa.setAttribute('href', waSchemeHref(r.url));
-    fbWabiz.setAttribute('href', waMeIntent(r.url, 'com.whatsapp.w4b'));
-    if(!isAndroid){ fbChrome.hidden = true; fbWabiz.hidden = true; }
-    fbPlain.setAttribute('href', r.url);
+    fbWabiz.setAttribute('href', 'intent://send?phone=201002655282&text=' + waQ(r.url) + '#Intent;scheme=whatsapp;end');
+    fbPlain.setAttribute('href', waMeIntent(r.url, 'com.whatsapp'));
+    fbWabiz.hidden = !isAndroid;
+    fbPlain.hidden = !isAndroid;
     fbBox.hidden = false;
+    helpRow.hidden = false;
   }
-  if(!isAndroid){ helpRow.hidden = true; }
-  fbChrome.setAttribute('href', CHROME_INTENT);
+  function fallbackCopy(txt, done){
+    var ta = document.createElement('textarea');
+    ta.value = txt;
+    ta.style.cssText = 'position:fixed;left:-9999px;top:0';
+    document.body.appendChild(ta);
+    ta.select();
+    try { document.execCommand('copy'); done(); } catch(e){}
+    document.body.removeChild(ta);
+  }
+  function copyText(txt, done){
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(txt).then(done, function(){ fallbackCopy(txt, done); });
+    } else { fallbackCopy(txt, done); }
+  }
+  fbCopy.addEventListener('click', function(e){
+    e.preventDefault();
+    var r = buildRegWaLink();
+    if(r.error){ return; }
+    copyText(r.text, function(){ fbCopy.textContent = 'تم النسخ ✓'; setTimeout(function(){ fbCopy.textContent = 'انسخ الرسالة'; }, 2500); });
+  });
+  // In-app browsers: no tap hijack, no auto-redirect. A plain tap on the static
+  // whatsapp:// link is the only navigation. Stop the plain-link jump to wa.me.
+  sendLink.addEventListener('click', function(e){
+    var r = buildRegWaLink();
+    if(r.error){ e.preventDefault(); touched = true; err.textContent = r.error; }
+  });
   helpLink.addEventListener('click', function(e){ e.preventDefault(); showFallback(); });
   form.addEventListener('input', function(e){ touched = true; if(e.target && e.target.style){ e.target.style.borderColor=''; } refreshWaLink(); });
   form.addEventListener('change', function(){ touched = true; refreshWaLink(); });
   refreshWaLink();
   form.addEventListener('submit', function(e){ e.preventDefault(); });
 
-  // Android in-app browsers (TikTok and the like) only hand off an intent when
-  // a tap triggers it, so: try three automatic routes on load, keep a plain
-  // anchor bar (identical in form to the wa-test button that works), and make
-  // the first tap anywhere on the page launch the intent.
   var hint = document.getElementById('open-browser-hint');
-  if(isAndroid && isInApp && hint){
-    var hintLink = document.getElementById('open-browser-link');
-    var hintAny = document.getElementById('open-browser-any');
+  if(isInApp && hint){
     hint.hidden = false;
-    logDbg('handoff: bar shown');
-    logDbg('handoff link1: ' + hintLink.getAttribute('href'));
-    logDbg('handoff link2: ' + hintAny.getAttribute('href'));
-    hintLink.addEventListener('click', function(){ logDbg('handoff: tap link1'); });
-    hintAny.addEventListener('click', function(){ logDbg('handoff: tap link2'); });
-
-    try { location.href = CHROME_INTENT; logDbg('auto1: location.href sent'); } catch(e){ logDbg('auto1 threw: ' + e); }
-    try {
-      var fr = document.createElement('iframe');
-      fr.style.cssText = 'position:absolute;left:-9999px;top:0;width:1px;height:1px;border:0';
-      fr.src = CHROME_INTENT;
-      document.body.appendChild(fr);
-      logDbg('auto2: iframe sent');
-    } catch(e){ logDbg('auto2 threw: ' + e); }
-
-    var armed = true;
-    function firstTap(ev){
-      if(!armed){ return; }
-      var t = ev.target;
-      if(t && t.closest && t.closest('#open-browser-hint')){ return; }
-      armed = false;
-      document.removeEventListener('click', firstTap, true);
-      logDbg('handoff: first tap -> intent');
-      try { location.href = CHROME_INTENT; } catch(e){ logDbg('first tap threw: ' + e); }
-    }
-    document.addEventListener('click', firstTap, true);
-    document.getElementById('open-browser-close').addEventListener('click', function(){
-      armed = false;
-      document.removeEventListener('click', firstTap, true);
-      hint.hidden = true;
-      logDbg('handoff: bar dismissed, tap hijack off');
+    var cp = document.getElementById('open-browser-copy');
+    cp.addEventListener('click', function(e){
+      e.preventDefault();
+      copyText(location.origin + location.pathname, function(){
+        cp.textContent = 'تم النسخ ✓';
+        setTimeout(function(){ cp.textContent = 'نسخ الرابط'; }, 2000);
+      });
     });
+    document.getElementById('open-browser-close').addEventListener('click', function(){ hint.hidden = true; });
   }
 })();
 </script>
