@@ -295,39 +295,13 @@ footer {
 #open-browser-hint .ob-text{flex:1 1 100%;font-size:13px;line-height:1.7}
 #open-browser-hint #open-browser-copy{background:#d4af37;color:#0b2d3f;font-weight:700;font-size:13px;padding:8px 14px;border-radius:8px;cursor:pointer}
 #open-browser-hint button{background:transparent;border:0;color:#fff;font-size:22px;line-height:1;padding:2px 6px;cursor:pointer;font-family:inherit}
-#browser-gate{position:fixed;inset:0;z-index:10000;background:rgba(4,20,32,.97);display:flex;align-items:center;justify-content:center;padding:20px;direction:rtl}
-#browser-gate[hidden]{display:none}
-.gate-card{width:100%;max-width:420px;background:#fff;border-radius:18px;padding:26px 22px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.4)}
-.gate-card h2{margin:0 0 10px;font-size:21px;color:#0b2d3f}
-.gate-card p{margin:0 0 18px;font-size:15px;line-height:1.8;color:#43525f}
-.gate-main{display:block;background:#d4af37;color:#0b2d3f;font-weight:800;font-size:17px;text-decoration:none;padding:15px;border-radius:12px;margin:0 0 12px}
-.gate-sub{display:block;width:100%;background:#fff;color:#0b2d3f;border:1px solid #0b2d3f;font-weight:700;font-size:15px;padding:13px;border-radius:12px;cursor:pointer;font-family:inherit;margin:0 0 12px}
-.gate-steps{font-size:13px!important;color:#6b7782!important;margin:14px 0 0!important}
-.gate-later{background:transparent;border:0;color:#8895a0;font-size:13px;cursor:pointer;text-decoration:underline;font-family:inherit;margin-top:8px}
-.gate-alt{display:block;color:#0b2d3f;font-size:13px;text-decoration:underline;margin:0 0 12px}
-.gate-url{user-select:all;-webkit-user-select:all;direction:ltr;text-align:left;font:12px/1.5 monospace;background:#f1f4f6;color:#0b2d3f;border:1px dashed #b9c4cc;padding:8px;border-radius:8px;word-break:break-all;margin:0 0 10px}
-.gate-done{font-size:14px!important;font-weight:700;color:#0b2d3f!important;margin:0 0 12px!important}
 </style>
 </head>
 <body>
 <div id="open-browser-hint" hidden>
-  <div class="ob-text">جوه تيك توك؟ عشان زرار واتساب يشتغل: اضغط ⋮ أعلى الشاشة واختار «فتح في المتصفح»، أو انسخ الرابط وافتحه في المتصفح.</div>
+  <div class="ob-text">لو الزرار ما فتحش واتساب، انسخ الرابط وافتحه في المتصفح</div>
   <button type="button" id="open-browser-copy">نسخ الرابط</button>
   <button type="button" id="open-browser-close" aria-label="إغلاق">×</button>
-</div>
-
-<div id="browser-gate" hidden>
-  <div class="gate-card">
-    <h2>افتح الرابط في المتصفح</h2>
-    <p>عشان زرار واتساب يشتغل ويفتح المحادثة مباشرة، افتح الصفحة في المتصفح أولاً. بياناتك هتكون جاهزة.</p>
-    <a id="gate-open" class="gate-main" href="#">افتح في المتصفح</a>
-    <p class="gate-done" id="gate-done" hidden>الرابط اتنسب ✓ افتح المتصفح والصقه في شريط العنوان</p>
-    <p class="gate-url" id="gate-url">https://adelsamir1942-debug.github.io/mzan-page/</p>
-    <a id="gate-chrome" class="gate-alt" href="#">افتح بجوجل كروم تحديداً</a>
-    <button type="button" id="gate-copy" class="gate-sub">انسخ الرابط تاني</button>
-    <p class="gate-steps">أو جوه تيك توك: اضغط ⋮ أعلى الشاشة ← «فتح في المتصفح»</p>
-    <button type="button" id="gate-later" class="gate-later">متابعة جوه تيك توك</button>
-  </div>
 </div>
 
 <div class="wrap">
@@ -485,7 +459,7 @@ footer {
   var toggle = document.getElementById('trial-toggle');
   var form = document.getElementById('trial-form');
   var err = document.getElementById('trial-err');
-  var BUILD = '2026-11-27-v14';
+  var BUILD = '2026-11-27-v15';
   var DEBUG = /[?&]debug=1/.test(location.search);
   var dbgEl = null;
   function logDbg(t){ if(dbgEl){ dbgEl.textContent += t + '\n'; } }
@@ -685,40 +659,6 @@ footer {
     }
   }
 
-  // Smart gate: one tap to hand the page to the real browser on Android.
-  // If the WebView blocks the intent, offer copy + the manual menu steps.
-  var gate = document.getElementById('browser-gate');
-  if(isInApp && gate){
-    var gateOpen = document.getElementById('gate-open');
-    var gateChrome = document.getElementById('gate-chrome');
-    var gateCopy = document.getElementById('gate-copy');
-    var gateLater = document.getElementById('gate-later');
-    var cleanUrl = location.origin + location.pathname;
-    var fallback = encodeURIComponent(stateUrl());
-    var intentBase = 'intent://' + location.host + location.pathname + '#Intent;scheme=https;';
-    if(isAndroid){
-      // No package = let Android resolve the installed default browser.
-      // A hard-coded com.android.chrome fails with "cannot complete action"
-      // on phones that use Samsung Internet / Opera / another browser.
-      gateOpen.setAttribute('href', intentBase + 'S.browser_fallback_url=' + fallback + ';end');
-      gateChrome.setAttribute('href', intentBase + 'package=com.android.chrome;S.browser_fallback_url=' + fallback + ';end');
-    } else {
-      gateOpen.setAttribute('href', stateUrl());
-      gateChrome.hidden = true;
-    }
-    document.getElementById('gate-url').textContent = cleanUrl;
-    var gateDone = document.getElementById('gate-done');
-    function copied(){ gateDone.hidden = false; }
-    gateCopy.addEventListener('click', function(e){
-      e.preventDefault();
-      copyText(cleanUrl, copied);
-    });
-    gateLater.addEventListener('click', function(){ gate.hidden = true; });
-    gate.hidden = false;
-    // Copying is the only action TikTok's WebView reliably allows, so do it
-    // automatically on arrival and show the address for long-press as well.
-    copyText(cleanUrl, copied);
-  }
 })();
 </script>
 </body>
