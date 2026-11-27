@@ -292,13 +292,15 @@ footer {
 #open-browser-hint[hidden]{display:none}
 #open-browser-hint a{display:inline-block;background:#d4af37;color:#0b2d3f;font-weight:700;padding:9px 16px;border-radius:8px;text-decoration:none;font-size:14px;white-space:nowrap}
 #open-browser-hint a.ob-alt{background:#fff;color:#0b2d3f}
+#open-browser-hint .ob-text{flex:1 1 100%;font-size:13px;line-height:1.7}
+#open-browser-hint #open-browser-copy{background:#d4af37;color:#0b2d3f;font-weight:700;font-size:13px;padding:8px 14px;border-radius:8px;cursor:pointer}
 #open-browser-hint button{background:transparent;border:0;color:#fff;font-size:22px;line-height:1;padding:2px 6px;cursor:pointer;font-family:inherit}
 </style>
 </head>
 <body>
 <div id="open-browser-hint" hidden>
-  <a id="open-browser-link" href="https://adelsamir1942-debug.github.io/mzan-page/#trial" target="_blank" rel="noopener">افتح في المتصفح</a>
-  <a id="open-browser-any" class="ob-alt" href="https://adelsamir1942-debug.github.io/mzan-page/#trial">متصفح آخر</a>
+  <div class="ob-text">جوه تيك توك؟ عشان زرار واتساب يشتغل: اضغط ⋮ أعلى الشاشة واختار «فتح في المتصفح»، أو انسخ الرابط وافتحه في المتصفح.</div>
+  <button type="button" id="open-browser-copy">نسخ الرابط</button>
   <button type="button" id="open-browser-close" aria-label="إغلاق">×</button>
 </div>
 
@@ -456,7 +458,7 @@ footer {
   var toggle = document.getElementById('trial-toggle');
   var form = document.getElementById('trial-form');
   var err = document.getElementById('trial-err');
-  var BUILD = '2026-11-27-v6';
+  var BUILD = '2026-11-27-v7';
   var DEBUG = /[?&]debug=1/.test(location.search);
   var dbgEl = null;
   function logDbg(t){ if(dbgEl){ dbgEl.textContent += t + '\n'; } }
@@ -565,12 +567,13 @@ footer {
     sendLink.style.pointerEvents = ok ? '' : 'none';
     sendLink.setAttribute('aria-disabled', ok ? 'false' : 'true');
     err.textContent = (touched && r.error) ? r.error : '';
+    if(isInApp && ok){ showFallback(); }
   }
   function showFallback(){
     var r = window.buildTrialWaLink();
-    if(r.error){ return; }
-    var q = waQ(r.url);
-    fbWa.setAttribute('href', r.url);
+    var url = r.error ? 'https://wa.me/201002655282?text=Mizan%20trial' : r.url;
+    var q = r.error ? 'Mizan%20trial' : waQ(r.url);
+    fbWa.setAttribute('href', url);
     fbWabiz.setAttribute('href', 'https://api.whatsapp.com/send?phone=201002655282&text=' + q);
     fbPlain.setAttribute('href', 'whatsapp://send?phone=201002655282&text=' + q);
     fbChrome.setAttribute('href', stateUrl());
@@ -581,16 +584,14 @@ footer {
   // wa.me is a universal (https) link: it works in normal browsers and is the
   // only scheme in-app browsers such as TikTok may still allow. No intent://
   // or whatsapp:// on the main button — those are silently blocked in WebViews.
+  // Fix v7: NO preventDefault on the valid state. A native <a href> click is the
+  // only user gesture in-app browsers (TikTok) reliably let through. The old
+  // window.open(..., '_system') + location.href combo opened a blank popup and
+  // was silently blocked inside TikTok WebView.
   sendLink.addEventListener('click', function(e){
-    e.preventDefault();
     var r = window.buildTrialWaLink();
-    if(r.error){ touched = true; err.textContent = r.error; return; }
-    if(isInApp){ try { window.open(r.url, '_system'); } catch(err2){} }
-    setTimeout(function(){
-      if(document.visibilityState !== 'visible'){ return; }
-      showFallback();
-    }, 600);
-    location.href = r.url;
+    if(r.error){ e.preventDefault(); touched = true; err.textContent = r.error; return; }
+    if(DEBUG){ logDbg('native click -> ' + sendLink.getAttribute('href')); }
   });
   helpLink.addEventListener('click', function(e){ e.preventDefault(); showFallback(); });
   fbCopy.addEventListener('click', function(e){
@@ -613,6 +614,11 @@ footer {
     document.body.removeChild(ta);
   }
 
+  function copyText(txt, done){
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(txt).then(done, function(){ fallbackCopy(txt, done); });
+    } else { fallbackCopy(txt, done); }
+  }
   form.addEventListener('input', function(e){ touched = true; if(e.target && e.target.style){ e.target.style.borderColor=''; } refreshWaLink(); });
   form.addEventListener('change', function(){ touched = true; refreshWaLink(); });
   form.addEventListener('submit', function(e){ e.preventDefault(); });
@@ -622,14 +628,24 @@ footer {
   // A quiet bar in in-app browsers: no auto-navigation, no tap hijacking.
   // It only offers to reopen the page with the form data already filled in.
   if(isInApp && hint){
-    hintLink.setAttribute('href', stateUrl());
-    hintAny.setAttribute('href', stateUrl());
     hint.hidden = false;
+    showFallback();
     document.getElementById('open-browser-close').addEventListener('click', function(){
       hint.hidden = true;
     });
+    var cp = document.getElementById('open-browser-copy');
+    if(cp){
+      cp.addEventListener('click', function(e){
+        e.preventDefault();
+        copyText(location.origin + location.pathname, function(){
+          cp.textContent = 'تم النسخ ✓';
+          setTimeout(function(){ cp.textContent = 'نسخ الرابط'; }, 2000);
+        });
+      });
+    }
   }
 })();
 </script>
 </body>
 </html>
+
