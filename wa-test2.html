@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<meta name="color-scheme" content="only light">
+<title>اختبار الفورم وواتساب</title>
+<style>
+body{font-family:Tahoma,Arial,sans-serif;background:#f5f1e8;color:#101f3c;margin:0;padding:16px}
+h1{font-size:19px;margin:0 0 8px}
+.card{background:#fff;border:1px solid #d4af37;border-radius:10px;padding:12px;margin:12px 0}
+label{display:block;margin:8px 0 3px;font-size:14px}
+input{width:100%;box-sizing:border-box;padding:10px;font-size:16px;border:1px solid #999;border-radius:8px}
+button,a.b{display:block;width:100%;box-sizing:border-box;text-align:center;text-decoration:none;font-weight:700;font-size:16px;padding:14px;border-radius:10px;margin:10px 0;border:0}
+button{background:#d4af37;color:#101f3c}
+a.b{background:#0d1b3e;color:#fff}
+a.big{background:#25a244;font-size:18px}
+.step{font-size:14px;line-height:1.9}
+.ok{color:#0a7d2c;font-weight:700}.no{color:#999}
+#log{direction:ltr;text-align:left;font:12px/1.5 monospace;white-space:pre-wrap;word-break:break-all}
+.err{color:#b00020;font-size:13px;min-height:18px}
+</style>
+</head>
+<body>
+<h1>اختبار: فورم ثم واتساب (نسخة تجريبية)</h1>
+<p style="font-size:14px">افتح الصفحة من تيك توك نفسه، املأ الفورم بأي بيانات تجريبية، واتبع الخطوات، وابعت سكرين شوت للجزء الأخضر.</p>
+
+<div class="card step" id="steps">
+  <div id="s1" class="no">① الصفحة اتفتحت</div>
+  <div id="s2" class="no">② الفورم اتبعت (التحقق نجح)</div>
+  <div id="s3" class="no">③ دوست على زرار واتساب</div>
+  <div id="s4" class="no">④ الصفحة خرجت للخلفية (واتساب غالبًا فتح)</div>
+  <div style="margin-top:6px">⑤ الرسالة ظهرت جاهزة في واتساب؟ دي بتشوفها أنت بعينك.</div>
+</div>
+
+<form id="f" class="card" novalidate>
+  <label for="n">الاسم</label><input id="n" autocomplete="name">
+  <label for="p">رقم الموبايل</label><input id="p" type="tel" inputmode="tel" dir="ltr">
+  <label for="c">المدينة</label><input id="c" autocomplete="address-level2">
+  <div class="err" id="err"></div>
+  <button type="submit" id="go">إرسال الطلب (تجريبي)</button>
+</form>
+
+<div class="card" id="after" hidden>
+  <p style="margin-top:0"><b>الفورم تمام.</b> دوس على الزرار الأخضر. الرابط اتجهز قبل ما تدوس.</p>
+  <a class="b big" id="A" href="#">واتساب: رابط A (whatsapp://)</a>
+  <a class="b" id="B" href="#">رابط B (أندرويد: intent واتساب)</a>
+  <a class="b" id="C" href="#">رابط C (أندرويد: intent wa.me)</a>
+  <hr>
+  <p style="font-size:13px">لو ولا واحد فتح واتساب، الطلب ما يضيعش. جرّب دول:</p>
+  <a class="b" id="T" href="tel:+201002655282">اتصل بميزان</a>
+  <button type="button" id="copy">انسخ الرسالة</button>
+  <p id="msgbox" dir="auto" style="font-size:13px;background:#faf6e6;padding:8px;border-radius:8px"></p>
+</div>
+
+<div class="card"><b>تشخيص</b><div id="log"></div></div>
+
+<script>
+(function(){
+  var NUM='201002655282';
+  var ua=navigator.userAgent||'';
+  var isAndroid=/Android/i.test(ua), isIOS=/iPhone|iPad|iPod/i.test(ua);
+  var logEl=document.getElementById('log');
+  function t(){ return new Date().toISOString().slice(11,19); }
+  function log(m){ logEl.textContent += t()+' '+m+'\n'; }
+  function done(id){ var e=document.getElementById(id); e.className='ok'; e.textContent=e.textContent.replace(/^/,'✓ '); }
+  var flags={};
+  function mark(id,msg){ if(flags[id]) return; flags[id]=1; done(id); log(msg); }
+  mark('s1','page loaded | android='+isAndroid+' ios='+isIOS+' | ua='+ua);
+  var f=document.getElementById('f'), err=document.getElementById('err');
+  function msg(){
+    var clean=function(x){return String(x).replace(/[\r\n]+/g,' ').replace(/-/g,' ').trim();};
+    return ['Mizan trial',clean(n.value),clean(p.value),clean(c.value)].join('-');
+  }
+  var n=document.getElementById('n'),p=document.getElementById('p'),c=document.getElementById('c');
+  f.addEventListener('submit',function(e){
+    e.preventDefault();
+    if(!n.value.trim()||!p.value.trim()||!c.value.trim()){ err.textContent='املأ الاسم والموبايل والمدينة.'; log('submit rejected: empty field'); return; }
+    err.textContent='';
+    var m=msg(), q=encodeURIComponent(m);
+    // All hrefs are set here, BEFORE the user taps. The tap is a plain static link tap.
+    document.getElementById('A').setAttribute('href','whatsapp://send?phone='+NUM+'&text='+q);
+    document.getElementById('B').setAttribute('href','intent://send?phone='+NUM+'&text='+q+'#Intent;scheme=whatsapp;end');
+    document.getElementById('C').setAttribute('href','intent://wa.me/'+NUM+'?text='+q+'#Intent;scheme=https;package=com.whatsapp;end');
+    document.getElementById('msgbox').textContent=m;
+    document.getElementById('after').hidden=false;
+    document.getElementById('after').scrollIntoView();
+    mark('s2','form valid; links prepared; msg='+m);
+  });
+  ['A','B','C','T'].forEach(function(id){
+    document.getElementById(id).addEventListener('click',function(){ mark('s3','tapped link '+id); log('tap '+id); });
+  });
+  document.addEventListener('visibilitychange',function(){
+    if(document.visibilityState==='hidden'){ mark('s4','page hidden (app switched)'); }
+    else { log('page visible again'); }
+  });
+  window.addEventListener('pagehide',function(){ log('pagehide'); });
+  document.getElementById('copy').addEventListener('click',function(){
+    var m=document.getElementById('msgbox').textContent, b=this;
+    function ok(){ b.textContent='تم النسخ ✓'; log('copied'); }
+    if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(m).then(ok,function(){ log('clipboard refused'); }); }
+    else { var ta=document.createElement('textarea'); ta.value=m; document.body.appendChild(ta); ta.select(); try{document.execCommand('copy'); ok();}catch(e){log('copy failed');} document.body.removeChild(ta); }
+  });
+})();
+</script>
+</body>
+</html>
