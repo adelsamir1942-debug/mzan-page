@@ -305,6 +305,8 @@ footer {
 .gate-steps{font-size:13px!important;color:#6b7782!important;margin:14px 0 0!important}
 .gate-later{background:transparent;border:0;color:#8895a0;font-size:13px;cursor:pointer;text-decoration:underline;font-family:inherit;margin-top:8px}
 .gate-alt{display:block;color:#0b2d3f;font-size:13px;text-decoration:underline;margin:0 0 12px}
+.gate-url{user-select:all;-webkit-user-select:all;direction:ltr;text-align:left;font:12px/1.5 monospace;background:#f1f4f6;color:#0b2d3f;border:1px dashed #b9c4cc;padding:8px;border-radius:8px;word-break:break-all;margin:0 0 10px}
+.gate-done{font-size:14px!important;font-weight:700;color:#0b2d3f!important;margin:0 0 12px!important}
 </style>
 </head>
 <body>
@@ -319,9 +321,11 @@ footer {
     <h2>افتح الرابط في المتصفح</h2>
     <p>عشان زرار واتساب يشتغل ويفتح المحادثة مباشرة، افتح الصفحة في المتصفح أولاً. بياناتك هتكون جاهزة.</p>
     <a id="gate-open" class="gate-main" href="#">افتح في المتصفح</a>
+    <p class="gate-done" id="gate-done" hidden>الرابط اتنسب ✓ افتح المتصفح والصقه في شريط العنوان</p>
+    <p class="gate-url" id="gate-url">https://adelsamir1942-debug.github.io/mzan-page/</p>
     <a id="gate-chrome" class="gate-alt" href="#">افتح بجوجل كروم تحديداً</a>
-    <button type="button" id="gate-copy" class="gate-sub">انسخ الرابط وافتحه بنفسك</button>
-    <p class="gate-steps">لو ظهرت رسالة «تعذر إكمال الإجراء»، جرّب كروم أو انسخ الرابط. أو جوه تيك توك: اضغط ⋮ أعلى الشاشة ← «فتح في المتصفح»</p>
+    <button type="button" id="gate-copy" class="gate-sub">انسخ الرابط تاني</button>
+    <p class="gate-steps">أو جوه تيك توك: اضغط ⋮ أعلى الشاشة ← «فتح في المتصفح»</p>
     <button type="button" id="gate-later" class="gate-later">متابعة جوه تيك توك</button>
   </div>
 </div>
@@ -480,7 +484,7 @@ footer {
   var toggle = document.getElementById('trial-toggle');
   var form = document.getElementById('trial-form');
   var err = document.getElementById('trial-err');
-  var BUILD = '2026-11-27-v11';
+  var BUILD = '2026-11-27-v12';
   var DEBUG = /[?&]debug=1/.test(location.search);
   var dbgEl = null;
   function logDbg(t){ if(dbgEl){ dbgEl.textContent += t + '\n'; } }
@@ -697,14 +701,18 @@ footer {
       gateOpen.setAttribute('href', stateUrl());
       gateChrome.hidden = true;
     }
+    document.getElementById('gate-url').textContent = cleanUrl;
+    var gateDone = document.getElementById('gate-done');
+    function copied(){ gateDone.hidden = false; }
     gateCopy.addEventListener('click', function(e){
       e.preventDefault();
-      copyText(cleanUrl, function(){
-        gateCopy.textContent = 'تم النسخ ✓ افتح المتصفح والصق الرابط';
-      });
+      copyText(cleanUrl, copied);
     });
     gateLater.addEventListener('click', function(){ gate.hidden = true; });
     gate.hidden = false;
+    // Copying is the only action TikTok's WebView reliably allows, so do it
+    // automatically on arrival and show the address for long-press as well.
+    copyText(cleanUrl, copied);
   }
 })();
 </script>
