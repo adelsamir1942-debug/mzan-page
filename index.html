@@ -458,7 +458,7 @@ footer {
   var toggle = document.getElementById('trial-toggle');
   var form = document.getElementById('trial-form');
   var err = document.getElementById('trial-err');
-  var BUILD = '2026-11-27-v8';
+  var BUILD = '2026-11-27-v9';
   var DEBUG = /[?&]debug=1/.test(location.search);
   var dbgEl = null;
   function logDbg(t){ if(dbgEl){ dbgEl.textContent += t + '\n'; } }
@@ -557,17 +557,11 @@ footer {
   }
 
   function waQ(url){ var k = url.indexOf('?text='); return k < 0 ? '' : url.slice(k + 6); }
-  // Android intent opens the WhatsApp app directly (chat with the prefilled text).
-  // S.browser_fallback_url keeps a safe path if the app is not installed or the
-  // WebView refuses the intent, so the user still lands on wa.me.
+  // v9: go straight at the WhatsApp app via its own custom scheme on mobile.
+  // wa.me stays as the safety net if the OS/WebView refuses the scheme.
   function directWaLink(r){
     var q = waQ(r.url);
-    if(isAndroid){
-      return 'intent://send?phone=201002655282&text=' + q +
-        '#Intent;scheme=whatsapp;package=com.whatsapp;S.browser_fallback_url=' +
-        encodeURIComponent(r.url) + ';end';
-    }
-    if(isIOS){ return 'whatsapp://send?phone=201002655282&text=' + q; }
+    if(isAndroid || isIOS){ return 'whatsapp://send?phone=201002655282&text=' + q; }
     return r.url;
   }
   var touched = false;
