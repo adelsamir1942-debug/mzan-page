@@ -224,9 +224,21 @@ footer {
   color: var(--ink-2);
   text-align: center;
 }
+
+#open-browser-hint{position:fixed;top:0;left:0;right:0;z-index:9998;display:flex;align-items:center;justify-content:center;gap:10px;padding:9px 40px 9px 10px;background:#0b2d3f;color:#fff;font-size:13px;box-shadow:0 2px 10px rgba(0,0,0,.28)}
+#open-browser-hint[hidden]{display:none}
+#open-browser-hint a{background:#d4af37;color:#0b2d3f;font-weight:700;padding:7px 14px;border-radius:8px;text-decoration:none;font-size:14px;white-space:nowrap}
+#open-browser-hint span{white-space:nowrap}
+#open-browser-hint button{position:absolute;left:4px;top:50%;transform:translateY(-50%);background:transparent;border:0;color:#fff;font-size:22px;line-height:1;padding:2px 6px;cursor:pointer;font-family:inherit}
 </style>
 </head>
 <body>
+<div id="open-browser-hint" hidden>
+  <span>أحسن تجربة في المتصفح</span>
+  <a id="open-browser-link" href="intent://adelsamir1942-debug.github.io/mzan-page/marketers.html#Intent;scheme=https;package=com.android.chrome;end">افتح في المتصفح</a>
+  <button type="button" id="open-browser-close" aria-label="إغلاق">×</button>
+</div>
+
 <div class="wrap">
 
   <div class="hero">
@@ -333,7 +345,7 @@ footer {
   var toggle = document.getElementById('reg-toggle');
   var form = document.getElementById('reg-form');
   var err = document.getElementById('reg-err');
-  var BUILD = '2026-11-27-v2';
+  var BUILD = '2026-11-27-v3';
   var DEBUG = /[?&]debug=1/.test(location.search);
   var dbgEl = null;
   function logDbg(t){ if(dbgEl){ dbgEl.textContent += t + '\n'; } }
@@ -442,6 +454,35 @@ footer {
   form.addEventListener('change', function(){ touched = true; refreshWaLink(); });
   refreshWaLink();
   form.addEventListener('submit', function(e){ e.preventDefault(); });
+
+  // Android in-app browsers (TikTok and the like) block the WhatsApp handoff.
+  // Try once per session to move the visitor into a real browser; when that is
+  // blocked, show one bar at the top so they can do it with a single tap.
+  var hint = document.getElementById('open-browser-hint');
+  if(isAndroid && isInApp && hint){
+    var hintClose = document.getElementById('open-browser-close');
+    var alreadyTried = false;
+    try { alreadyTried = sessionStorage.getItem('mizan_browser_handoff') === '1'; } catch(e){}
+    function showHint(){
+      if(document.hidden){ return; }
+      hint.hidden = false;
+      document.body.style.paddingTop = hint.offsetHeight + 'px';
+      logDbg('handoff: prompt shown');
+    }
+    if(!alreadyTried){
+      try { sessionStorage.setItem('mizan_browser_handoff', '1'); } catch(e){}
+      logDbg('handoff: trying chrome intent once per session');
+      setTimeout(showHint, 1200);
+      try { location.href = CHROME_INTENT; } catch(e){ logDbg('handoff: intent failed ' + e); }
+    } else {
+      logDbg('handoff: already tried this session, prompt only');
+      showHint();
+    }
+    hintClose.addEventListener('click', function(){
+      hint.hidden = true;
+      document.body.style.paddingTop = '';
+    });
+  }
 })();
 </script>
 </body>
