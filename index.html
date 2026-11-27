@@ -305,7 +305,6 @@ footer {
         <textarea id="t-note" name="note"></textarea>
         <div class="trial-err" id="trial-err"></div>
         <button type="submit" class="btn-gold">ابعت الطلب على واتساب</button>
-        <div id="wa-fallback-hint" style="display:none; margin-top:10px; font-size:14px; color:#b3261e;">لو انت فاتح من تيك توك أو فيسبوك، دوس على ⋮ فوق واختار "فتح في المتصفح" الأول.</div>
         <p class="trial-note">بعد الضغط هيتفتح واتساب بالرسالة جاهزة، اضغط إرسال ويوصلنا طلبك. مفيش بيانات بتتسجل على الموقع.</p>
       </form>
       <p class="login-line"><a href="https://adelsamir699-maker.github.io" target="_blank" rel="noopener">عندي حساب</a></p>
@@ -435,45 +434,12 @@ footer {
       document.getElementById('trial').scrollIntoView({behavior:'smooth', block:'start'});
     });
   });
-  function openWhatsApp(text, fbId){
-    var enc = encodeURIComponent(text);
-    var ua = navigator.userAgent || '';
-    var isAndroid = /Android/i.test(ua);
-    var isIOS = /iPhone|iPad|iPod/i.test(ua);
-    var isInApp = /TikTok|Instagram|FBAN|FBAV|Line|Snapchat/i.test(ua);
-    var webUrl = ((isAndroid || isIOS) ? 'https://api.whatsapp.com/send?phone=201002655282&text=' : 'https://web.whatsapp.com/send?phone=201002655282&text=') + enc;
-    if(isInApp){
-      document.getElementById(fbId+'-hint').style.display = 'block';
-      return;
-    }
-    var switched = false;
-    var onHide = function(){ switched = true; };
-    document.addEventListener('visibilitychange', function h(){
-      if(document.hidden){ switched = true; document.removeEventListener('visibilitychange', h); }
-    });
-    window.addEventListener('blur', onHide);
-    if(isAndroid){
-      window.location.href = 'intent://send?phone=201002655282&text=' + enc + '#Intent;scheme=whatsapp;end';
-      setTimeout(function(){
-        window.removeEventListener('blur', onHide);
-        if(!switched && !document.hidden){ window.location.href = webUrl; }
-      }, 3000);
-    } else if(isIOS){
-      window.location.href = 'https://wa.me/201002655282?text=' + enc;
-    } else {
-      window.location.href = 'whatsapp://send?phone=201002655282&text=' + enc;
-      setTimeout(function(){
-        window.removeEventListener('blur', onHide);
-        if(!switched && !document.hidden){ window.location.href = webUrl; }
-      }, 3000);
-    }
-  }
   form.addEventListener('submit', function(e){
     e.preventDefault();
     var r = window.buildTrialWaLink();
     if(r.error){ err.textContent = r.error; return; }
     err.textContent = '';
-    openWhatsApp(r.text, 'wa-fallback');
+    window.open('https://wa.me/201002655282?text='+encodeURIComponent(r.text), '_blank', 'noopener');
   });
 })();
 </script>
