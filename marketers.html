@@ -337,9 +337,20 @@ footer {
     return {url:'https://wa.me/201002655282?text='+encodeURIComponent(lines.join('\n'))};
   }
   var sendLink = document.getElementById('reg-send');
+  var ua = navigator.userAgent || '';
+  var isAndroid = /Android/i.test(ua);
+  var isInApp = /; wv\)/.test(ua) ||
+    (isAndroid && /Version\/[\d.]+/.test(ua) && /Chrome\/[\d.]+/.test(ua)) ||
+    /TikTok|musical_ly|Instagram|FBAN|FBAV|FB_IAB|Line|Snapchat/i.test(ua);
+  function waHref(url){
+    if(!isInApp){ return url; }
+    var q = url.slice(url.indexOf('?text=')).replace('?text=', '');
+    if(isAndroid){ return 'intent://send?phone=201002655282&text=' + q + '#Intent;scheme=whatsapp;end'; }
+    return 'whatsapp://send?phone=201002655282&text=' + q;
+  }
   function refreshWaLink(){
     var r = buildRegWaLink();
-    sendLink.setAttribute('href', r.error ? 'https://wa.me/201002655282' : r.url);
+    sendLink.setAttribute('href', r.error ? 'https://wa.me/201002655282' : waHref(r.url));
   }
   form.addEventListener('input', function(e){ if(e.target && e.target.style){ e.target.style.borderColor=''; } refreshWaLink(); });
   form.addEventListener('change', refreshWaLink);
@@ -357,7 +368,7 @@ footer {
       return;
     }
     err.textContent = '';
-    sendLink.setAttribute('href', r.url);
+    sendLink.setAttribute('href', waHref(r.url));
   });
 })();
 </script>
