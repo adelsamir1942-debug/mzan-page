@@ -326,6 +326,7 @@ footer {
         <div class="wa-fb" id="trial-fb" hidden>
           <p>جرّب واحد من دول، الرسالة بتتبعت زي ما هي:</p>
           <a class="p1" id="trial-fb-wa" href="#">افتح واتساب بالرسالة (طريقة تانية)</a>
+          <a class="p2" id="trial-fb-wabiz" href="#">لو عندك واتساب بزنس</a>
           <a class="p2" id="trial-fb-plain" href="#">افتح لينك واتساب العادي</a>
           <a class="p3" id="trial-fb-chrome" href="#">افتح الصفحة في كروم وأبعت من هناك</a>
         </div>
@@ -474,6 +475,7 @@ footer {
   var helpLink = document.getElementById('trial-help');
   var fbBox = document.getElementById('trial-fb');
   var fbWa = document.getElementById('trial-fb-wa');
+  var fbWabiz = document.getElementById('trial-fb-wabiz');
   var fbPlain = document.getElementById('trial-fb-plain');
   var fbChrome = document.getElementById('trial-fb-chrome');
   var CHROME_INTENT = 'intent://adelsamir1942-debug.github.io/mzan-page/#Intent;scheme=https;package=com.android.chrome;end';
@@ -486,10 +488,14 @@ footer {
   function waQ(url){ var k = url.indexOf('?text='); return k < 0 ? '' : url.slice(k + 6); }
   function waHref(url){
     if(!isAndroid && !(isIOS && isInApp)){ return url; }
-    return 'whatsapp://send?phone=201002655282&text=' + waQ(url);
+    if(isAndroid){ return waMeIntent(url, 'com.whatsapp'); }
+    return waSchemeHref(url);
   }
-  function waIntentHref(url){
-    return 'intent://send?phone=201002655282&text=' + waQ(url) + '#Intent;scheme=whatsapp;end';
+  function waMeIntent(url, pkg){
+    return 'intent://wa.me/201002655282?text=' + waQ(url) + '#Intent;scheme=https;package=' + pkg + ';end';
+  }
+  function waSchemeHref(url){
+    return 'whatsapp://send?phone=201002655282&text=' + waQ(url);
   }
   function refreshWaLink(){
     var r = window.buildTrialWaLink();
@@ -499,8 +505,9 @@ footer {
   function showFallback(){
     var r = window.buildTrialWaLink();
     if(r.error){ return; }
-    fbWa.setAttribute('href', isAndroid ? waIntentHref(r.url) : 'whatsapp://send?phone=201002655282&text=' + waQ(r.url));
-    if(!isAndroid){ fbChrome.hidden = true; }
+    fbWa.setAttribute('href', waSchemeHref(r.url));
+    fbWabiz.setAttribute('href', waMeIntent(r.url, 'com.whatsapp.w4b'));
+    if(!isAndroid){ fbChrome.hidden = true; fbWabiz.hidden = true; }
     fbPlain.setAttribute('href', r.url);
     fbBox.hidden = false;
   }
